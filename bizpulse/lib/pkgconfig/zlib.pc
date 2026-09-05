@@ -1,0 +1,13 @@
+prefix=/Users/apple/BizPulse/bizpulse
+exec_prefix=/Users/apple/BizPulse/bizpulse
+libdir=/Users/apple/BizPulse/bizpulse/lib
+sharedlibdir=/Users/apple/BizPulse/bizpulse/lib
+includedir=/Users/apple/BizPulse/bizpulse/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.13
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}
