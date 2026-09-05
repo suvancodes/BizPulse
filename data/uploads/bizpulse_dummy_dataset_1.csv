@@ -1,0 +1,21 @@
+transaction_id,date,customer_id,product_id,product_name,category,quantity,unit_price,cost_price,discount,store_id,region,payment_method
+T001,2026-01-03,C001,P001,Laptop Stand,Accessories,2,1800,1100,100,S001,West Bengal,UPI
+T002,2026-01-05,C002,P002,Wireless Mouse,Accessories,3,850,500,50,S001,West Bengal,Card
+T003,2026-01-08,C003,P003,Mechanical Keyboard,Accessories,1,3200,2100,200,S002,Jharkhand,UPI
+T004,2026-01-12,C001,P004,USB-C Hub,Electronics,2,1500,900,0,S001,West Bengal,UPI
+T005,2026-01-15,C004,P005,Monitor 24 inch,Electronics,1,12500,9000,500,S003,Odisha,Card
+T006,2026-01-19,C005,P002,Wireless Mouse,Accessories,2,850,500,0,S002,Jharkhand,Cash
+T007,2026-01-22,C006,P006,Webcam HD,Electronics,1,2800,1700,100,S001,West Bengal,UPI
+T008,2026-01-25,C002,P007,Office Chair,Furniture,1,8500,6000,500,S003,Odisha,Card
+T009,2026-02-02,C007,P003,Mechanical Keyboard,Accessories,2,3200,2100,300,S002,Jharkhand,UPI
+T010,2026-02-06,C001,P001,Laptop Stand,Accessories,1,1800,1100,0,S001,West Bengal,UPI
+T011,2026-02-10,C008,P008,Desk Lamp,Furniture,3,1200,700,100,S003,Odisha,Cash
+T012,2026-02-14,C004,P005,Monitor 24 inch,Electronics,2,12500,9000,1000,S003,Odisha,Card
+T013,2026-02-18,C009,P009,Bluetooth Speaker,Electronics,2,2200,1400,150,S002,Bihar,UPI
+T014,2026-02-21,C005,P004,USB-C Hub,Electronics,3,1500,900,0,S002,Jharkhand,UPI
+T015,2026-02-25,C010,P007,Office Chair,Furniture,2,8500,6000,800,S001,West Bengal,Card
+T016,2026-03-03,C002,P002,Wireless Mouse,Accessories,4,850,500,100,S001,West Bengal,UPI
+T017,2026-03-07,C006,P006,Webcam HD,Electronics,2,2800,1700,200,S001,West Bengal,UPI
+T018,2026-03-11,C011,P010,Power Bank,Electronics,5,1600,950,200,S002,Bihar,Cash
+T019,2026-03-15,C003,P003,Mechanical Keyboard,Accessories,1,3200,2100,0,S002,Jharkhand,Card
+T020,2026-03-20,C004,P005,Monitor 24 inch,Electronics,1,12500,9000,500,S003,Odisha,UPI
