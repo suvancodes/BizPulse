@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizPulse Dataset Upload</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <section class="card">
+            <h1>BizPulse</h1>
+            <p>Upload your transaction dataset to begin analysis.</p>
+
+            {% if error %}
+                <div class="message error">{{ error }}</div>
+            {% endif %}
+
+            {% if success %}
+                <div class="message success">{{ success }}</div>
+
+                <div class="stats">
+                    <span>Rows: {{ rows }}</span>
+                    <span>Columns: {{ columns }}</span>
+                </div>
+
+                <h2>Data Preview</h2>
+                <div class="table-wrapper">
+                    {{ preview | safe }}
+                </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                <label for="dataset">Choose CSV file</label>
+                <input id="dataset" name="dataset" type="file" accept=".csv" required>
+                <button type="submit">Upload Dataset</button>
+            </form>
+
+            <small>
+                Required columns: transaction_id, date, product_id,
+                product_name, quantity, unit_price
+            </small>
+        </section>
+    </main>
+</body>
+</html>
