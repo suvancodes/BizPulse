@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizPulse Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <main class="dashboard-shell">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark">B</div>
+                <div>
+                    <h1>BizPulse</h1>
+                    <span>Business intelligence dashboard</span>
+                </div>
+            </div>
+
+            <a class="upload-button" href="/upload">
+                ＋ Upload business files
+            </a>
+        </header>
+
+        <section class="welcome-section">
+            <div>
+                <p class="eyebrow">DATASET OVERVIEW</p>
+                <h2>Your business at a glance</h2>
+                <p class="muted">Analyzing <strong>{{ filename }}</strong></p>
+            </div>
+            <div class="status-badge">
+                <span></span> Analysis complete
+            </div>
+        </section>
+
+        <section class="kpi-grid">
+            <article class="kpi-card revenue-card">
+                <div class="kpi-icon">₹</div>
+                <div>
+                    <span>Total Revenue</span>
+                    <strong>₹{{ "{:,.2f}".format(analytics.total_revenue) }}</strong>
+                    <small>Across all transactions</small>
+                </div>
+            </article>
+
+            <article class="kpi-card">
+                <div class="kpi-icon blue">↗</div>
+                <div>
+                    <span>Total Orders</span>
+                    <strong>{{ "{:,}".format(analytics.total_orders) }}</strong>
+                    <small>Unique transactions</small>
+                </div>
+            </article>
+
+            <article class="kpi-card">
+                <div class="kpi-icon green">▦</div>
+                <div>
+                    <span>Units Sold</span>
+                    <strong>{{ "{:,.0f}".format(analytics.total_units) }}</strong>
+                    <small>Total quantity sold</small>
+                </div>
+            </article>
+
+            <article class="kpi-card">
+                <div class="kpi-icon orange">◉</div>
+                <div>
+                    <span>Average Order Value</span>
+                    <strong>₹{{ "{:,.2f}".format(analytics.average_order_value) }}</strong>
+                    <small>Revenue per order</small>
+                </div>
+            </article>
+        </section>
+
+        <section class="chart-grid">
+            <article class="dashboard-card large-chart">
+                <div class="card-heading">
+                    <div>
+                        <p class="eyebrow">PERFORMANCE</p>
+                        <h3>Revenue trend</h3>
+                    </div>
+                    <span class="chart-label">Daily</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </article>
+
+            <article class="dashboard-card">
+                <div class="card-heading">
+                    <div>
+                        <p class="eyebrow">ACTIVITY</p>
+                        <h3>Orders over time</h3>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="ordersChart"></canvas>
+                </div>
+            </article>
+
+            <article class="dashboard-card">
+                <div class="card-heading">
+                    <div>
+                        <p class="eyebrow">PRODUCT MIX</p>
+                        <h3>Revenue by category</h3>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    {% if analytics.categories %}
+                        <canvas id="categoryChart"></canvas>
+                    {% else %}
+                        <div class="empty-state">Category data is not available.</div>
+                    {% endif %}
+                </div>
+            </article>
+
+            <article class="dashboard-card">
+                <div class="card-heading">
+                    <div>
+                        <p class="eyebrow">LOCATION</p>
+                        <h3>Sales by region or store</h3>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    {% if analytics.regions %}
+                        <canvas id="regionChart"></canvas>
+                    {% else %}
+                        <div class="empty-state">Region or store data is not available.</div>
+                    {% endif %}
+                </div>
+            </article>
+        </section>
+
+        <section class="dashboard-card">
+            <div class="card-heading">
+                <div>
+                    <p class="eyebrow">PRODUCT PERFORMANCE</p>
+                    <h3>Top products by revenue</h3>
+                </div>
+                <span class="chart-label">Top 10</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th>Revenue</th>
+                            <th>Units sold</th>
+                            <th>Orders</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in analytics.products[:10] %}
+                        <tr>
+                            <td><span class="rank">{{ loop.index }}</span></td>
+                            <td class="product-name">{{ product.product_name }}</td>
+                            <td>₹{{ "{:,.2f}".format(product.revenue) }}</td>
+                            <td>{{ "{:,.0f}".format(product.units_sold) }}</td>
+                            <td>{{ "{:,}".format(product.orders) }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="empty-row">No product data available.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        {% if inventory_analytics %}
+        <section class="dashboard-card inventory-section">
+            <div class="card-heading">
+                <div>
+                    <p class="eyebrow">INVENTORY INTELLIGENCE</p>
+                    <h3>Inventory health</h3>
+                </div>
+                <a class="chart-label" href="/inventory-upload">
+                    Update inventory
+                </a>
+            </div>
+
+            <div class="inventory-kpis">
+                <div>
+                    <span>Total products</span>
+                    <strong>{{ inventory_analytics.total_products }}</strong>
+                </div>
+                <div class="inventory-risk">
+                    <span>Stockout risk</span>
+                    <strong>{{ inventory_analytics.stockout_count }}</strong>
+                </div>
+                <div class="inventory-warning">
+                    <span>Low stock</span>
+                    <strong>
+                        {{ inventory_analytics.low_count + inventory_analytics.risk_count }}
+                    </strong>
+                </div>
+                <div class="inventory-good">
+                    <span>Healthy stock</span>
+                    <strong>{{ inventory_analytics.healthy_count }}</strong>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Current stock</th>
+                            <th>Daily demand</th>
+                            <th>7-day predicted demand</th>
+                            <th>Stockout estimate</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in inventory_analytics.products %}
+                        <tr>
+                            <td class="product-name">{{ product.product_name }}</td>
+                            <td>{{ "%.0f"|format(product.stock_quantity) }}</td>
+                            <td>{{ "%.2f"|format(product.average_daily_demand) }}</td>
+                            <td>{{ "%.0f"|format(product.predicted_demand_7_days) }}</td>
+                            <td>
+                                {% if product.days_until_stockout is not none %}
+                                    {{ product.days_until_stockout }} days
+                                {% else %}
+                                    No demand history
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="inventory-status {{ product.status|lower }}">
+                                    {{ product.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <script>
+        const dailyData = {{ analytics.daily_revenue | tojson }};
+        const categoryData = {{ analytics.categories | tojson }};
+        const regionData = {{ analytics.regions | tojson }};
+
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: "#94a3b8" }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: "#eef2f7" },
+                    ticks: { color: "#94a3b8" }
+                }
+            }
+        };
+
+        new Chart(document.getElementById("revenueChart"), {
+            type: "line",
+            data: {
+                labels: dailyData.map(item => item.date),
+                datasets: [{
+                    data: dailyData.map(item => item.revenue),
+                    borderColor: "#635bff",
+                    backgroundColor: "rgba(99, 91, 255, 0.12)",
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 2,
+                    pointBackgroundColor: "#635bff"
+                }]
+            },
+            options: chartOptions
+        });
+
+        new Chart(document.getElementById("ordersChart"), {
+            type: "line",
+            data: {
+                labels: dailyData.map(item => item.date),
+                datasets: [{
+                    data: dailyData.map(item => item.orders),
+                    borderColor: "#10b981",
+                    backgroundColor: "rgba(16, 185, 129, 0.12)",
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 2
+                }]
+            },
+            options: chartOptions
+        });
+
+        if (categoryData.length) {
+            new Chart(document.getElementById("categoryChart"), {
+                type: "doughnut",
+                data: {
+                    labels: categoryData.map(item => item.category),
+                    datasets: [{
+                        data: categoryData.map(item => item.revenue),
+                        backgroundColor: [
+                            "#635bff", "#10b981", "#f59e0b",
+                            "#f43f5e", "#8b5cf6", "#06b6d4"
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+                            labels: { usePointStyle: true, padding: 16 }
+                        }
+                    }
+                }
+            });
+        }
+
+        if (regionData.length) {
+            new Chart(document.getElementById("regionChart"), {
+                type: "bar",
+                data: {
+                    labels: regionData.map(item => item.name),
+                    datasets: [{
+                        data: regionData.map(item => item.revenue),
+                        backgroundColor: "#8b5cf6",
+                        borderRadius: 6,
+                        barThickness: 24
+                    }]
+                },
+                options: chartOptions
+            });
+        }
+    </script>
+</body>
+</html>

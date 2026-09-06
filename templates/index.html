@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizPulse | Business Intelligence</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="landing-page">
+        <nav class="landing-nav">
+            <a class="brand" href="/">
+                <div class="brand-mark">B</div>
+                <div>
+                    <h1>BizPulse</h1>
+                    <span>Business intelligence, simplified</span>
+                </div>
+            </a>
+
+            <a class="nav-button" href="/upload">Get started</a>
+        </nav>
+
+        <section class="hero-section">
+            <div class="hero-content">
+                <p class="eyebrow">AUTOMATED BUSINESS ANALYTICS</p>
+
+                <h2>Turn your business data into <span>better decisions.</span></h2>
+
+                <p class="hero-text">
+                    Upload your transaction data and instantly discover revenue
+                    trends, top products, customer activity, and business insights.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="primary-button" href="/upload">
+                        Upload your dataset <strong>→</strong>
+                    </a>
+                    <a class="text-button" href="#features">Explore features</a>
+                </div>
+
+                <div class="trust-row">
+                    <span>✓ No technical setup</span>
+                    <span>✓ Instant analysis</span>
+                    <span>✓ Clear insights</span>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="floating-card floating-card-one">
+                    <span>Revenue</span>
+                    <strong>₹8,42,500</strong>
+                    <small>↗ 14.2% this month</small>
+                </div>
+
+                <div class="dashboard-preview">
+                    <div class="preview-top">
+                        <div class="preview-brand">
+                            <span class="preview-logo">B</span>
+                            <strong>Business overview</strong>
+                        </div>
+                        <span class="preview-dot"></span>
+                    </div>
+
+                    <div class="preview-kpis">
+                        <div>
+                            <small>Revenue</small>
+                            <strong>₹8.42L</strong>
+                        </div>
+                        <div>
+                            <small>Orders</small>
+                            <strong>4,821</strong>
+                        </div>
+                    </div>
+
+                    <div class="preview-chart">
+                        <div class="chart-bars">
+                            <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                        </div>
+                        <div class="chart-line"></div>
+                    </div>
+
+                    <div class="preview-bottom">
+                        <div>
+                            <span></span>
+                            <strong>Top products</strong>
+                        </div>
+                        <b>View analytics →</b>
+                    </div>
+                </div>
+
+                <div class="floating-card floating-card-two">
+                    <span>Top product</span>
+                    <strong>Product A</strong>
+                    <small>₹1.8L revenue</small>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-section" id="features">
+            <div class="section-heading">
+                <p class="eyebrow">EVERYTHING YOU NEED</p>
+                <h2>Understand your business faster.</h2>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="feature-icon purple">↗</div>
+                    <h3>Sales analytics</h3>
+                    <p>Track revenue, orders, units sold, and average order value.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon cyan">▥</div>
+                    <h3>Product insights</h3>
+                    <p>Find your best-performing products and categories.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon green">◎</div>
+                    <h3>Clear visualizations</h3>
+                    <p>See important trends through simple, interactive charts.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <p class="eyebrow">READY TO BEGIN?</p>
+            <h2>Your data already contains the answers.</h2>
+            <a class="primary-button" href="/upload">Analyze your dataset →</a>
+        </section>
+
+        <footer class="landing-footer">
+            © 2026 BizPulse. Business intelligence, simplified.
+        </footer>
+    </main>
+</body>
+</html>

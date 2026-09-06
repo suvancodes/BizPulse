@@ -3,44 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BizPulse Dataset Upload</title>
+    <title>BizPulse | Upload Data</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <main class="container">
-        <section class="card">
-            <h1>BizPulse</h1>
-            <p>Upload your transaction dataset to begin analysis.</p>
+<main class="data-upload-page">
+    <nav class="upload-nav">
+        <a class="brand" href="/">
+            <div class="brand-mark">B</div>
+            <div>
+                <h1>BizPulse</h1>
+                <span>Business intelligence, simplified</span>
+            </div>
+        </a>
+        <span class="secure-label">● Secure upload</span>
+    </nav>
 
-            {% if error %}
-                <div class="message error">{{ error }}</div>
-            {% endif %}
+    <section class="upload-header">
+        <p class="eyebrow">DATA WORKSPACE</p>
+        <h2>Upload your business data</h2>
+        <p>
+            Upload one or more CSV files. BizPulse will automatically generate
+            the analytics available from your data.
+        </p>
+    </section>
 
-            {% if success %}
-                <div class="message success">{{ success }}</div>
+    {% if error %}
+        <div class="message error">
+            <strong>Upload failed</strong>
+            <span>{{ error }}</span>
+        </div>
+    {% endif %}
 
-                <div class="stats">
-                    <span>Rows: {{ rows }}</span>
-                    <span>Columns: {{ columns }}</span>
+    <form method="POST" enctype="multipart/form-data" id="dataForm">
+        <section class="data-files-grid">
+            <article class="data-file-card primary-file">
+                <div class="file-card-header">
+                    <div class="file-symbol">↗</div>
+                    <div>
+                        <h3>Transactions</h3>
+                        <span>Sales and revenue analytics</span>
+                    </div>
+                    <em>Core file</em>
                 </div>
 
-                <h2>Data Preview</h2>
-                <div class="table-wrapper">
-                    {{ preview | safe }}
+                <div class="column-title">Required columns</div>
+
+                <div class="column-list">
+                    <span>transaction_id</span>
+                    <span>date</span>
+                    <span>customer_id</span>
+                    <span>product_id</span>
+                    <span>product_name</span>
+                    <span>category</span>
+                    <span>quantity</span>
+                    <span>unit_price</span>
                 </div>
-            {% endif %}
 
-            <form method="POST" enctype="multipart/form-data">
-                <label for="dataset">Choose CSV file</label>
-                <input id="dataset" name="dataset" type="file" accept=".csv" required>
-                <button type="submit">Upload Dataset</button>
-            </form>
+                <p class="column-help">
+                    <strong>customer_id</strong> identifies the buyer for order analytics.
+                    <strong>product_name</strong> identifies the sold product.
+                </p>
 
-            <small>
-                Required columns: transaction_id, date, product_id,
-                product_name, quantity, unit_price
-            </small>
+                <label class="file-picker">
+                    <input type="file" name="dataset" accept=".csv">
+                    <span class="picker-icon">↑</span>
+                    <strong class="file-name">Choose transactions.csv</strong>
+                    <small>CSV format · Max 16 MB</small>
+                </label>
+            </article>
+
+            <article class="data-file-card">
+                <div class="file-card-header">
+                    <div class="file-symbol cyan">▦</div>
+                    <div>
+                        <h3>Products</h3>
+                        <span>Product catalogue information</span>
+                    </div>
+                    <em>Optional</em>
+                </div>
+
+                <div class="column-title">Required columns</div>
+                <div class="column-list">
+                    <span>product_id</span>
+                    <span>product_name</span>
+                </div>
+
+                <p class="column-help">
+                    Used to match products with inventory and display product names.
+                </p>
+
+                <label class="file-picker">
+                    <input type="file" name="products" accept=".csv">
+                    <span class="picker-icon">↑</span>
+                    <strong class="file-name">Choose products.csv</strong>
+                    <small>CSV format · Max 16 MB</small>
+                </label>
+            </article>
+
+            <article class="data-file-card">
+                <div class="file-card-header">
+                    <div class="file-symbol green">◫</div>
+                    <div>
+                        <h3>Inventory</h3>
+                        <span>Stock and reorder insights</span>
+                    </div>
+                    <em>Optional</em>
+                </div>
+
+                <div class="column-title">Required columns</div>
+                <div class="column-list">
+                    <span>product_id</span>
+                    <span>date</span>
+                    <span>stock_quantity</span>
+                    <span>reorder_level</span>
+                </div>
+
+                <p class="column-help">
+                    <strong>product_id</strong> connects stock records to products and transactions.
+                </p>
+
+                <label class="file-picker">
+                    <input type="file" name="inventory" accept=".csv">
+                    <span class="picker-icon">↑</span>
+                    <strong class="file-name">Choose inventory.csv</strong>
+                    <small>CSV format · Max 16 MB</small>
+                </label>
+            </article>
         </section>
-    </main>
+
+        <section class="upload-actions">
+            <div>
+                <strong>Ready to analyze?</strong>
+                <span>Upload at least one valid CSV file.</span>
+            </div>
+            <button type="submit" id="submitButton">
+                <span id="submitText">Build dashboard →</span>
+                <span id="loadingText" hidden>Processing data...</span>
+            </button>
+        </section>
+    </form>
+
+    <footer class="upload-footer">
+        Your files are processed securely and only the latest upload is retained.
+    </footer>
+</main>
+
+<script>
+    document.querySelectorAll(".file-picker input").forEach(input => {
+        input.addEventListener("change", () => {
+            const name = input.files[0]?.name;
+            const label = input.closest(".file-picker");
+            const fileName = label.querySelector(".file-name");
+
+            if (name) {
+                fileName.textContent = name;
+                label.classList.add("selected");
+            }
+        });
+    });
+
+    document.getElementById("dataForm").addEventListener("submit", () => {
+        document.getElementById("submitText").hidden = true;
+        document.getElementById("loadingText").hidden = false;
+        document.getElementById("submitButton").disabled = true;
+    });
+</script>
 </body>
 </html>
