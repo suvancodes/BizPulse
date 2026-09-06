@@ -24,13 +24,30 @@ INVENTORY_DATASET = UPLOAD_FOLDER / "current_inventory.csv"
 REQUIRED_COLUMNS = {
     "transaction_id",
     "date",
-    "customer_id",
     "product_id",
     "product_name",
     "category",
     "quantity",
     "unit_price",
 }
+
+LOCATION_COLUMNS = {
+    "region",
+    "store_id",
+}
+
+PRODUCT_COLUMNS = {
+    "product_id",
+    "product_name",
+}
+
+INVENTORY_COLUMNS = {
+    "product_id",
+    "date",
+    "stock_quantity",
+    "reorder_level",
+}
+
 
 @app.route("/")
 def index():
@@ -48,6 +65,18 @@ def upload_dataset():
 
         if error:
             return render_template("upload.html", error=error)
+
+        if transactions is not None:
+            transaction_errors = validate_transaction_columns(transactions)
+
+            if transaction_errors:
+                return render_template(
+                    "upload.html",
+                    error=(
+                        "transactions.csv is missing required columns: "
+                        + ", ".join(transaction_errors)
+                    ),
+                )
 
         products, error = read_optional_csv(
             request.files.get("products"),
@@ -67,10 +96,7 @@ def upload_dataset():
         if error:
             return render_template("upload.html", error=error)
 
-        if not any(
-            dataframe is not None
-            for dataframe in (transactions, products, inventory)
-        ):
+        if transactions is None and products is None and inventory is None:
             return render_template(
                 "upload.html",
                 error="Upload at least one CSV file.",
@@ -115,60 +141,12 @@ def upload_dataset():
 
         return render_template(
             "dashboard.html",
-            filename=", ".join(uploaded_files),
+            filename="Current uploaded data",
             analytics=sales_analytics,
             inventory_analytics=inventory_analytics,
         )
 
     return render_template("upload.html")
-
-
-@app.route("/inventory-upload", methods=["GET", "POST"])
-def upload_inventory_files():
-    if request.method == "POST":
-        products, products_error = validate_csv_file(
-            request.files.get("products"),
-            PRODUCT_COLUMNS,
-            "products.csv",
-        )
-
-        if products_error:
-            return render_template("inventory_upload.html", error=products_error)
-
-        inventory, inventory_error = validate_csv_file(
-            request.files.get("inventory"),
-            INVENTORY_COLUMNS,
-            "inventory.csv",
-        )
-
-        if inventory_error:
-            return render_template("inventory_upload.html", error=inventory_error)
-
-        if not Path(CURRENT_DATASET).exists():
-            return render_template(
-                "inventory_upload.html",
-                error="Upload transactions.csv before inventory files.",
-            )
-
-        transactions = pd.read_csv(CURRENT_DATASET)
-
-        products.to_csv(PRODUCTS_DATASET, index=False)
-        inventory.to_csv(INVENTORY_DATASET, index=False)
-
-        inventory_analytics = calculate_inventory_analytics(
-            products,
-            inventory,
-            transactions,
-        )
-
-        return render_template(
-            "dashboard.html",
-            filename="current_transactions.csv",
-            analytics=calculate_sales_analytics(transactions),
-            inventory_analytics=inventory_analytics,
-        )
-
-    return render_template("inventory_upload.html")
 
 
 def validate_csv_file(file, required_columns, label):
@@ -184,7 +162,10 @@ def validate_csv_file(file, required_columns, label):
         return None, f"The {label} file could not be read."
 
     dataframe = normalize_columns(dataframe)
-    missing_columns = sorted(required_columns - set(dataframe.columns))
+
+    missing_columns = sorted(
+        set(required_columns) - set(dataframe.columns)
+    )
 
     if missing_columns:
         return None, (
@@ -204,12 +185,13 @@ def read_optional_csv(file, required_columns, label):
 
     try:
         dataframe = pd.read_csv(file)
-    except Exception as error:
-        return None, f"{label} could not be read: {error}"
+    except Exception:
+        return None, f"{label} could not be read."
 
     dataframe = normalize_columns(dataframe)
+
     missing_columns = sorted(
-        required_columns - set(dataframe.columns)
+        set(required_columns) - set(dataframe.columns)
     )
 
     if missing_columns:
@@ -232,6 +214,15 @@ def empty_sales_analytics():
         "categories": [],
         "regions": [],
     }
+
+
+def validate_transaction_columns(dataframe):
+    missing_columns = REQUIRED_COLUMNS - set(dataframe.columns)
+
+    if not (LOCATION_COLUMNS & set(dataframe.columns)):
+        missing_columns.add("region or store_id")
+
+    return sorted(missing_columns)
 
 
 if __name__ == "__main__":

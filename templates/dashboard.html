@@ -177,7 +177,7 @@
                     <p class="eyebrow">INVENTORY INTELLIGENCE</p>
                     <h3>Inventory health</h3>
                 </div>
-                <a class="chart-label" href="/inventory-upload">
+                <a class="chart-label" href="/upload">
                     Update inventory
                 </a>
             </div>
@@ -241,6 +241,34 @@
             </div>
         </section>
         {% endif %}
+
+        <section class="inventory-chart-grid">
+            <div class="inventory-chart-card">
+                <div class="chart-heading">
+                    <div>
+                        <p class="eyebrow">STOCK OVERVIEW</p>
+                        <h4>Inventory health</h4>
+                    </div>
+                </div>
+                <div class="inventory-doughnut">
+                    <canvas id="inventoryStatusChart"></canvas>
+                </div>
+            </div>
+
+            <div class="inventory-chart-card">
+                <div class="chart-heading">
+                    <div>
+                        <p class="eyebrow">DEMAND ANALYSIS</p>
+                        <h4>Top daily demand</h4>
+                    </div>
+                </div>
+                <div class="inventory-bar">
+                    <canvas id="inventoryDemandChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
     </main>
 
     <script>
@@ -342,6 +370,79 @@
                 options: chartOptions
             });
         }
+
+        const inventoryProducts = {{ (inventory_analytics.products if inventory_analytics else []) | tojson }};
+
+        const topDemandProducts = [...inventoryProducts]
+            .sort((a, b) => b.average_daily_demand - a.average_daily_demand)
+            .slice(0, 7);
+
+        new Chart(document.getElementById("inventoryStatusChart"), {
+            type: "doughnut",
+            data: {
+                labels: ["Healthy", "Low", "Risk", "Stockout"],
+                datasets: [{
+                    data: [
+                        {{ inventory_analytics.healthy_count }},
+                        {{ inventory_analytics.low_count }},
+                        {{ inventory_analytics.risk_count }},
+                        {{ inventory_analytics.stockout_count }}
+                    ],
+                    backgroundColor: ["#34d399", "#fbbf24", "#fb7185", "#ef4444"],
+                    borderColor: "#111827",
+                    borderWidth: 5,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "72%",
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            color: "#94a3b8",
+                            padding: 18,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById("inventoryDemandChart"), {
+            type: "bar",
+            data: {
+                labels: topDemandProducts.map(product => product.product_name),
+                datasets: [{
+                    label: "Units per day",
+                    data: topDemandProducts.map(product => product.average_daily_demand),
+                    backgroundColor: "#8b5cf6",
+                    borderRadius: 7,
+                    barThickness: 24
+                }]
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: { color: "#94a3b8" },
+                        grid: { color: "rgba(148, 163, 184, .12)" }
+                    },
+                    y: {
+                        ticks: { color: "#cbd5e1" },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
     </script>
 </body>
 </html>
