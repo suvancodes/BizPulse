@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
-from flask import Flask, render_template, request
+from flask import Flask, redirect, render_template, request, url_for
 
 from backend.analytics.inventory import (
     INVENTORY_COLUMNS,
@@ -10,6 +10,7 @@ from backend.analytics.inventory import (
     normalize_columns,
 )
 from backend.analytics.sales import calculate_sales_analytics
+from backend.analytics.forecasting import forecast_sales
 
 
 app = Flask(__name__)
@@ -50,8 +51,34 @@ INVENTORY_COLUMNS = {
 
 
 @app.route("/")
-def index():
-    return render_template("index.html")
+@app.route("/dashboard")
+def dashboard_page():
+    transactions = load_current_transactions()
+    products = load_current_products()
+    inventory = load_current_inventory()
+
+    if transactions is None:
+        return redirect(url_for("upload_dataset"))
+
+    analytics = calculate_sales_analytics(transactions)
+    forecast = forecast_sales(transactions)
+
+    inventory_analytics = None
+
+    if products is not None and inventory is not None:
+        inventory_analytics = calculate_inventory_analytics(
+            products,
+            inventory,
+            transactions,
+        )
+
+    return render_template(
+        "dashboard.html",
+        filename="Current uploaded data",
+        analytics=analytics,
+        forecast=forecast,
+        inventory_analytics=inventory_analytics,
+    )
 
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -105,6 +132,7 @@ def upload_dataset():
         if transactions is not None:
             transactions.to_csv(CURRENT_DATASET, index=False)
             sales_analytics = calculate_sales_analytics(transactions)
+            forecast = forecast_sales(transactions)
         else:
             sales_analytics = empty_sales_analytics()
 
@@ -144,6 +172,7 @@ def upload_dataset():
             filename="Current uploaded data",
             analytics=sales_analytics,
             inventory_analytics=inventory_analytics,
+            forecast=forecast,
         )
 
     return render_template("upload.html")
@@ -225,5 +254,73 @@ def validate_transaction_columns(dataframe):
     return sorted(missing_columns)
 
 
+@app.route("/analytics")
+def analytics_page():
+    transactions = load_csv(CURRENT_DATASET)
+
+    if transactions is None:
+        return redirect(url_for("upload_dataset"))
+
+    return render_template(
+        "analytics.html",
+        analytics=calculate_sales_analytics(transactions),
+    )
+
+
+@app.route("/inventory")
+def inventory_page():
+    products = load_csv(PRODUCTS_DATASET)
+    inventory = load_csv(INVENTORY_DATASET)
+    transactions = load_csv(CURRENT_DATASET)
+
+    if products is None or inventory is None:
+        return redirect(url_for("upload_dataset"))
+
+    if transactions is None:
+        transactions = pd.DataFrame(
+            columns=["product_id", "date", "quantity"]
+        )
+
+    inventory_data = calculate_inventory_analytics(
+        normalize_columns(products),
+        normalize_columns(inventory),
+        normalize_columns(transactions),
+    )
+
+    return render_template(
+        "inventory.html",
+        inventory_analytics=inventory_data,
+    )
+
+
+@app.route("/forecast")
+def forecast_page():
+    transactions = load_csv(CURRENT_DATASET)
+
+    if transactions is None:
+        return redirect(url_for("upload_dataset"))
+
+    return render_template(
+        "forecast.html",
+        forecast=forecast_sales(normalize_columns(transactions)),
+    )
+
+
+def load_csv(path):
+    if not path.exists():
+        return None
+    return pd.read_csv(path)
+
+
+def load_current_transactions():
+    return pd.read_csv(CURRENT_DATASET) if CURRENT_DATASET.exists() else None
+
+
+def load_current_products():
+    return pd.read_csv(PRODUCTS_DATASET) if PRODUCTS_DATASET.exists() else None
+
+
+def load_current_inventory():
+    return pd.read_csv(INVENTORY_DATASET) if INVENTORY_DATASET.exists() else None
 if __name__ == "__main__":
     app.run(debug=True)

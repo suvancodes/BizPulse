@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizPulse | Forecast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<main class="dashboard-shell">
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-mark">B</div>
+            <div>
+                <h1>BizPulse</h1>
+                <span>Forecasting dashboard</span>
+            </div>
+        </div>
+
+        <nav class="dashboard-nav">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/analytics">Analytics</a>
+            <a href="/inventory">Inventory</a>
+            <a class="active" href="/forecast">Forecast</a>
+            <a class="upload-button" href="/upload">Upload data</a>
+        </nav>
+    </header>
+
+    <section class="welcome-section">
+        <div>
+            <p class="eyebrow">PREDICTIVE ANALYTICS</p>
+            <h2>Revenue forecast</h2>
+            <p class="muted">Predictions generated from your uploaded data.</p>
+        </div>
+    </section>
+
+    <section class="forecast-metrics">
+        <article class="forecast-metric">
+            <span>🔮 Next 30-day revenue</span>
+            <strong>
+                ₹{{ "{:,.2f}".format(forecast.total_predicted_revenue) }}
+            </strong>
+        </article>
+
+        <article class="forecast-metric">
+            <span>Expected orders</span>
+            <strong>{{ "{:,}".format(forecast.expected_orders) }}</strong>
+        </article>
+
+        <article class="forecast-metric">
+            <span>Projected growth</span>
+            <strong class="{% if forecast.growth >= 0 %}positive{% else %}negative{% endif %}">
+                {{ "{:+.1f}".format(forecast.growth) }}%
+            </strong>
+        </article>
+
+        <article class="forecast-metric">
+            <span>Forecast accuracy</span>
+            <strong>
+                {% if forecast.accuracy is not none %}
+                    {{ forecast.accuracy }}%
+                {% else %}
+                    N/A
+                {% endif %}
+            </strong>
+        </article>
+    </section>
+
+    <section class="dashboard-card forecast-section">
+        <p class="eyebrow">FORECAST TREND</p>
+        <h3>Predicted revenue for the next 30 days</h3>
+
+        <div class="forecast-chart">
+            <canvas id="forecastChart"></canvas>
+        </div>
+    </section>
+</main>
+
+<script>
+const forecastData = {{ forecast.forecast | tojson }};
+
+new Chart(document.getElementById("forecastChart"), {
+    type: "line",
+    data: {
+        labels: forecastData.map(item => item.forecast_date),
+        datasets: [{
+            label: "Predicted revenue",
+            data: forecastData.map(item => item.predicted_revenue),
+            borderColor: "#22d3ee",
+            backgroundColor: "rgba(34, 211, 238, .14)",
+            fill: true,
+            tension: .35,
+            pointRadius: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: { color: "#cbd5e1" }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { color: "#94a3b8" },
+                grid: { display: false }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { color: "#94a3b8" },
+                grid: {
+                    color: "rgba(148, 163, 184, .12)"
+                }
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>

@@ -2,7 +2,6 @@ import pandas as pd
 
 
 def calculate_sales_analytics(dataframe):
-    """Calculate basic sales analytics for the dashboard."""
     data = dataframe.copy()
 
     data["quantity"] = pd.to_numeric(data["quantity"], errors="coerce")
@@ -22,10 +21,6 @@ def calculate_sales_analytics(dataframe):
         data["quantity"] * data["unit_price"] - data["discount"]
     ).clip(lower=0)
 
-    total_revenue = float(data["revenue"].sum())
-    total_orders = int(data["transaction_id"].nunique())
-    total_units = float(data["quantity"].sum())
-
     data["date_label"] = data["date"].dt.strftime("%Y-%m-%d")
 
     daily = (
@@ -36,61 +31,53 @@ def calculate_sales_analytics(dataframe):
             units=("quantity", "sum"),
         )
         .rename(columns={"date_label": "date"})
-        .sort_values(by="date")
+        .sort_values("date")
     )
 
     products = (
         data.groupby(["product_id", "product_name"], as_index=False)
-        .agg(
-            revenue=("revenue", "sum"),
-            units_sold=("quantity", "sum"),
-            orders=("transaction_id", "nunique"),
-        )
-        .sort_values(by="revenue", ascending=False)
+        .agg(revenue=("revenue", "sum"))
+        .sort_values("revenue", ascending=False)
+        .head(10)
+        .rename(columns={"product_name": "name"})
     )
 
-    result = {
+    categories = (
+        data.groupby("category", as_index=False)
+        .agg(revenue=("revenue", "sum"))
+        .sort_values("revenue", ascending=False)
+        .rename(columns={"category": "name"})
+    )
+
+    if "region" in data.columns:
+        regions = (
+            data.groupby("region", as_index=False)
+            .agg(revenue=("revenue", "sum"))
+            .sort_values("revenue", ascending=False)
+            .rename(columns={"region": "name"})
+        )
+    elif "store_id" in data.columns:
+        regions = (
+            data.groupby("store_id", as_index=False)
+            .agg(revenue=("revenue", "sum"))
+            .sort_values("revenue", ascending=False)
+            .rename(columns={"store_id": "name"})
+        )
+    else:
+        regions = pd.DataFrame(columns=["name", "revenue"])
+
+    total_revenue = float(data["revenue"].sum())
+    total_orders = int(data["transaction_id"].nunique())
+
+    return {
         "total_revenue": total_revenue,
         "total_orders": total_orders,
-        "total_units": total_units,
+        "total_units": float(data["quantity"].sum()),
         "average_order_value": (
             total_revenue / total_orders if total_orders else 0
         ),
-        "products": products.to_dict("records"),
         "daily_revenue": daily.to_dict("records"),
-        "categories": [],
-        "regions": [],
+        "products": products.to_dict("records"),
+        "categories": categories.to_dict("records"),
+        "regions": regions.to_dict("records"),
     }
-
-    if "category" in data.columns:
-        categories = (
-            data.groupby("category", as_index=False)
-            .agg(
-                revenue=("revenue", "sum"),
-                orders=("transaction_id", "nunique"),
-                units=("quantity", "sum"),
-            )
-            .sort_values(by="revenue", ascending=False)
-        )
-        result["categories"] = categories.to_dict("records")
-
-    region_column = None
-    if "region" in data.columns:
-        region_column = "region"
-    elif "store_id" in data.columns:
-        region_column = "store_id"
-
-    if region_column:
-        regions = (
-            data.groupby(region_column, as_index=False)
-            .agg(
-                revenue=("revenue", "sum"),
-                orders=("transaction_id", "nunique"),
-                units=("quantity", "sum"),
-            )
-            .rename(columns={region_column: "name"})
-            .sort_values(by="revenue", ascending=False)
-        )
-        result["regions"] = regions.to_dict("records")
-
-    return result

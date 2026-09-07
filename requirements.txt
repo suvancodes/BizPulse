@@ -1,3 +1,5 @@
 Flask
 pandas
 Werkzeug
+scikit-learn 
+joblib

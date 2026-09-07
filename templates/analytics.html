@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizPulse | Sales Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<main class="dashboard-shell">
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-mark">B</div>
+            <div>
+                <h1>BizPulse</h1>
+                <span>Sales analytics</span>
+            </div>
+        </div>
+
+        <nav class="dashboard-nav">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/analytics">Analytics</a>
+            <a href="/inventory">Inventory</a>
+            <a href="/forecast">Forecast</a>
+            <a class="upload-button" href="/upload">Upload data</a>
+        </nav>
+    </header>
+
+    <section class="welcome-section">
+        <div>
+            <p class="eyebrow">SALES PERFORMANCE</p>
+            <h2>Business analytics</h2>
+            <p class="muted">Understand your sales performance over time.</p>
+        </div>
+    </section>
+
+    <section class="kpi-grid">
+        <article class="kpi-card">
+            <div class="kpi-icon">₹</div>
+            <div>
+                <span>Total revenue</span>
+                <strong>₹{{ "{:,.2f}".format(analytics.total_revenue) }}</strong>
+            </div>
+        </article>
+
+        <article class="kpi-card">
+            <div class="kpi-icon blue">↗</div>
+            <div>
+                <span>Total orders</span>
+                <strong>{{ "{:,}".format(analytics.total_orders) }}</strong>
+            </div>
+        </article>
+
+        <article class="kpi-card">
+            <div class="kpi-icon green">▦</div>
+            <div>
+                <span>Units sold</span>
+                <strong>{{ "{:,.0f}".format(analytics.total_units) }}</strong>
+            </div>
+        </article>
+
+        <article class="kpi-card">
+            <div class="kpi-icon orange">◉</div>
+            <div>
+                <span>Average order value</span>
+                <strong>₹{{ "{:,.2f}".format(analytics.average_order_value) }}</strong>
+            </div>
+        </article>
+    </section>
+
+    <section class="chart-grid">
+        <article class="dashboard-card">
+            <p class="eyebrow">PERFORMANCE</p>
+            <h3>Revenue trend</h3>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </article>
+
+        <article class="dashboard-card">
+            <p class="eyebrow">ACTIVITY</p>
+            <h3>Orders over time</h3>
+            <div class="chart-container">
+                <canvas id="ordersChart"></canvas>
+            </div>
+        </article>
+
+        <article class="dashboard-card">
+            <p class="eyebrow">PRODUCT PERFORMANCE</p>
+            <h3>Top products by revenue</h3>
+            <div class="chart-container">
+                <canvas id="productChart"></canvas>
+            </div>
+        </article>
+
+        <article class="dashboard-card">
+            <p class="eyebrow">CATEGORY MIX</p>
+            <h3>Revenue by category</h3>
+            <div class="chart-container">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </article>
+
+        <article class="dashboard-card">
+            <p class="eyebrow">LOCATION</p>
+            <h3>Sales by region or store</h3>
+            <div class="chart-container">
+                <canvas id="regionChart"></canvas>
+            </div>
+        </article>
+    </section>
+</main>
+
+<script>
+const dailyData = {{ analytics.daily_revenue | tojson }};
+
+const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: { display: false }
+    },
+    scales: {
+        x: {
+            ticks: { color: "#94a3b8" },
+            grid: { display: false }
+        },
+        y: {
+            beginAtZero: true,
+            ticks: { color: "#94a3b8" },
+            grid: {
+                color: "rgba(148, 163, 184, .12)"
+            }
+        }
+    }
+};
+
+new Chart(document.getElementById("revenueChart"), {
+    type: "line",
+    data: {
+        labels: dailyData.map(item => item.date),
+        datasets: [{
+            data: dailyData.map(item => item.revenue),
+            borderColor: "#8b5cf6",
+            backgroundColor: "rgba(139, 92, 246, .15)",
+            fill: true,
+            tension: .35
+        }]
+    },
+    options
+});
+
+new Chart(document.getElementById("ordersChart"), {
+    type: "line",
+    data: {
+        labels: dailyData.map(item => item.date),
+        datasets: [{
+            label: "Orders",
+            data: dailyData.map(item => item.orders),
+            borderColor: "#22d3ee",
+            backgroundColor: "rgba(34, 211, 238, .14)",
+            fill: true,
+            tension: .35,
+            pointRadius: 2
+        }]
+    },
+    options
+});
+
+const productData = {{ analytics.products | tojson }};
+const categoryData = {{ analytics.categories | tojson }};
+const regionData = {{ analytics.regions | tojson }};
+
+new Chart(document.getElementById("productChart"), {
+    type: "bar",
+    data: {
+        labels: productData.map(item => item.name),
+        datasets: [{
+            label: "Revenue",
+            data: productData.map(item => item.revenue),
+            backgroundColor: "#8b5cf6",
+            borderRadius: 7
+        }]
+    },
+    options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: { color: "#94a3b8" },
+                grid: { color: "rgba(148, 163, 184, .12)" }
+            },
+            y: {
+                ticks: { color: "#cbd5e1" },
+                grid: { display: false }
+            }
+        }
+    }
+});
+
+new Chart(document.getElementById("categoryChart"), {
+    type: "doughnut",
+    data: {
+        labels: categoryData.map(item => item.name),
+        datasets: [{
+            data: categoryData.map(item => item.revenue),
+            backgroundColor: [
+                "#8b5cf6",
+                "#22d3ee",
+                "#34d399",
+                "#fbbf24",
+                "#fb7185",
+                "#6366f1"
+            ],
+            borderColor: "#111827",
+            borderWidth: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "65%",
+        plugins: {
+            legend: {
+                position: "bottom",
+                labels: {
+                    color: "#94a3b8",
+                    usePointStyle: true
+                }
+            }
+        }
+    }
+});
+
+new Chart(document.getElementById("regionChart"), {
+    type: "bar",
+    data: {
+        labels: regionData.map(item => item.name),
+        datasets: [{
+            label: "Revenue",
+            data: regionData.map(item => item.revenue),
+            backgroundColor: "#22d3ee",
+            borderRadius: 7
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: {
+                ticks: { color: "#94a3b8" },
+                grid: { display: false }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { color: "#94a3b8" },
+                grid: { color: "rgba(148, 163, 184, .12)" }
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>
