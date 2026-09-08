@@ -11,6 +11,7 @@ from backend.analytics.inventory import (
 )
 from backend.analytics.sales import calculate_sales_analytics
 from backend.analytics.forecasting import forecast_sales
+from backend.analytics.customers import calculate_customer_segments
 
 
 app = Flask(__name__)
@@ -25,6 +26,7 @@ INVENTORY_DATASET = UPLOAD_FOLDER / "current_inventory.csv"
 REQUIRED_COLUMNS = {
     "transaction_id",
     "date",
+    "customer_id",
     "product_id",
     "product_name",
     "category",
@@ -51,6 +53,10 @@ INVENTORY_COLUMNS = {
 
 
 @app.route("/")
+def index():
+    return render_template("index.html")
+
+
 @app.route("/dashboard")
 def dashboard_page():
     transactions = load_current_transactions()
@@ -60,24 +66,33 @@ def dashboard_page():
     if transactions is None:
         return redirect(url_for("upload_dataset"))
 
-    analytics = calculate_sales_analytics(transactions)
-    forecast = forecast_sales(transactions)
+    transactions = normalize_columns(transactions)
+
+    segmentation = {
+        "customers": [],
+        "summary": [],
+        "total_customers": 0,
+    }
+
+    if "customer_id" in transactions.columns:
+        segmentation = calculate_customer_segments(transactions)
 
     inventory_analytics = None
 
     if products is not None and inventory is not None:
         inventory_analytics = calculate_inventory_analytics(
-            products,
-            inventory,
+            normalize_columns(products),
+            normalize_columns(inventory),
             transactions,
         )
 
     return render_template(
         "dashboard.html",
         filename="Current uploaded data",
-        analytics=analytics,
-        forecast=forecast,
+        analytics=calculate_sales_analytics(transactions),
+        forecast=forecast_sales(transactions),
         inventory_analytics=inventory_analytics,
+        segmentation=segmentation,
     )
 
 
@@ -167,13 +182,7 @@ def upload_dataset():
             if dataframe is not None
         ]
 
-        return render_template(
-            "dashboard.html",
-            filename="Current uploaded data",
-            analytics=sales_analytics,
-            inventory_analytics=inventory_analytics,
-            forecast=forecast,
-        )
+        return redirect(url_for("dashboard_page"))
 
     return render_template("upload.html")
 
@@ -306,6 +315,36 @@ def forecast_page():
     )
 
 
+@app.route("/customers")
+def customers_page():
+    transactions = load_current_transactions()
+
+    if transactions is None:
+        return redirect(url_for("upload_dataset"))
+
+    transactions = normalize_columns(transactions)
+
+    if "customer_id" not in transactions.columns:
+        return render_template(
+            "customers.html",
+            error=(
+                "Customer segmentation requires the "
+                "customer_id column."
+            ),
+            segmentation={
+                "customers": [],
+                "summary": [],
+                "total_customers": 0,
+            },
+        )
+
+    return render_template(
+        "customers.html",
+        segmentation=calculate_customer_segments(transactions),
+        error=None,
+    )
+
+
 def load_csv(path):
     if not path.exists():
         return None
@@ -322,5 +361,6 @@ def load_current_products():
 
 def load_current_inventory():
     return pd.read_csv(INVENTORY_DATASET) if INVENTORY_DATASET.exists() else None
+
 if __name__ == "__main__":
     app.run(debug=True)

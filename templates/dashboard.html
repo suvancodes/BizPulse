@@ -20,8 +20,9 @@
         </div>
 
         <nav class="dashboard-nav">
-            <a href="/dashboard">Dashboard</a>
+            <a href="/dashboard" class="active">Dashboard</a>
             <a href="/analytics">Analytics</a>
+            <a href="/customers">Customers</a>
             <a href="/inventory">Inventory</a>
             <a href="/forecast">Forecast</a>
             <a class="upload-button" href="/upload">Upload data</a>
@@ -154,47 +155,34 @@
             </div>
         </div>
 
-        <div class="table-wrapper">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Current stock</th>
-                        <th>Daily demand</th>
-                        <th>Stockout estimate</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for product in inventory_analytics.products %}
-                    <tr>
-                        <td>{{ product.product_name }}</td>
-                        <td>{{ "%.0f"|format(product.stock_quantity) }}</td>
-                        <td>
-                            {{ "%.2f"|format(
-                                product.average_daily_demand
-                            ) }}
-                        </td>
-                        <td>
-                            {% if product.days_until_stockout is not none %}
-                                {{ product.days_until_stockout }} days
-                            {% else %}
-                                No demand history
-                            {% endif %}
-                        </td>
-                        <td>
-                            <span class="inventory-status
-                                {{ product.status|lower }}">
-                                {{ product.status }}
-                            </span>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        
     </section>
     {% endif %}
+
+{% if segmentation.summary %}
+<section class="customer-dashboard-grid">
+    <article class="dashboard-card">
+        <p class="eyebrow">CUSTOMER INTELLIGENCE</p>
+        <h3>Customer segmentation</h3>
+        <p class="muted">
+            {{ segmentation.total_customers }} customers analyzed with RFM.
+        </p>
+
+        <div class="customer-dashboard-chart">
+            <canvas id="dashboardSegmentChart"></canvas>
+        </div>
+    </article>
+
+    <article class="dashboard-card">
+        <p class="eyebrow">RFM PERFORMANCE</p>
+        <h3>Customers by segment</h3>
+
+        <div class="customer-dashboard-chart">
+            <canvas id="dashboardSegmentBarChart"></canvas>
+        </div>
+    </article>
+</section>
+{% endif %}
 
 </main>
 
@@ -348,6 +336,80 @@ new Chart(document.getElementById("inventoryDemandChart"), {
             y: {
                 ticks: { color: "#cbd5e1" },
                 grid: { display: false }
+            }
+        }
+    }
+});
+{% endif %}
+
+{% if segmentation.summary %}
+const segmentData = {{ segmentation.summary | tojson }};
+
+const segmentLabels = segmentData.map(item => item.segment);
+const segmentValues = segmentData.map(item => item.customers);
+
+new Chart(document.getElementById("dashboardSegmentChart"), {
+    type: "doughnut",
+    data: {
+        labels: segmentLabels,
+        datasets: [{
+            data: segmentValues,
+            backgroundColor: [
+                "#a78bfa",
+                "#34d399",
+                "#22d3ee",
+                "#fbbf24",
+                "#fb7185",
+                "#64748b"
+            ],
+            borderColor: "#111827",
+            borderWidth: 5
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "68%",
+        plugins: {
+            legend: {
+                position: "bottom",
+                labels: {
+                    color: "#cbd5e1",
+                    usePointStyle: true
+                }
+            }
+        }
+    }
+});
+
+new Chart(document.getElementById("dashboardSegmentBarChart"), {
+    type: "bar",
+    data: {
+        labels: segmentLabels,
+        datasets: [{
+            label: "Customers",
+            data: segmentValues,
+            backgroundColor: "#8b5cf6",
+            borderRadius: 7
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: {
+                ticks: { color: "#cbd5e1" },
+                grid: { display: false }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: { color: "#94a3b8" },
+                grid: {
+                    color: "rgba(148, 163, 184, .12)"
+                }
             }
         }
     }

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizPulse | Customers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<main class="dashboard-shell">
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-mark">B</div>
+            <div>
+                <h1>BizPulse</h1>
+                <span>Customer intelligence</span>
+            </div>
+        </div>
+
+        <nav class="dashboard-nav">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/analytics">Analytics</a>
+            <a class="active" href="/customers">Customers</a>
+            <a href="/inventory">Inventory</a>
+            <a href="/forecast">Forecast</a>
+            <a class="upload-button" href="/upload">Upload data</a>
+        </nav>
+    </header>
+
+    <section class="welcome-section">
+        <div>
+            <p class="eyebrow">CUSTOMER INTELLIGENCE</p>
+            <h2>Customer segmentation</h2>
+            <p class="muted">
+                RFM analysis based on purchase behavior.
+            </p>
+        </div>
+    </section>
+
+    {% if error %}
+    <section class="message error">{{ error }}</section>
+    {% else %}
+    <section class="customer-layout">
+        <article class="dashboard-card">
+            <p class="eyebrow">SEGMENT DISTRIBUTION</p>
+            <h3>{{ segmentation.total_customers }} customers analyzed</h3>
+            <div class="customer-chart">
+                <canvas id="segmentChart"></canvas>
+            </div>
+        </article>
+
+        <article class="dashboard-card rfm-card">
+            <div class="rfm-card-header">
+                <div>
+                    <p class="eyebrow">RFM SEGMENTS</p>
+                    <h3>Customer groups</h3>
+                </div>
+                <span class="rfm-total">
+                    {{ segmentation.total_customers }} total
+                </span>
+            </div>
+
+            <div class="segment-list">
+            {% for item in segmentation.summary %}
+                <div class="segment-row">
+                    <div class="segment-info">
+                        <span class="segment-dot segment-{{ loop.index }}"></span>
+                        <div>
+                            <strong>{{ item.segment }}</strong>
+                            <small>
+                                {% if item.segment == "Champions" %}
+                                    Highest-value loyal customers
+                                {% elif item.segment == "Loyal" %}
+                                    Repeat customers
+                                {% elif item.segment == "Potential Loyal" %}
+                                    Growing customer relationships
+                                {% elif item.segment == "At Risk" %}
+                                    Customers needing attention
+                                {% elif item.segment == "Lost" %}
+                                    Inactive customers
+                                {% else %}
+                                    Recently acquired customers
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="segment-value">
+                        <strong>{{ item.customers }}</strong>
+                        <span>{{ item.percentage }}%</span>
+                    </div>
+
+                    <div class="segment-progress">
+                        <span style="width: {{ item.percentage }}%"></span>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </article>
+    </section>
+
+    <section class="dashboard-card">
+        <p class="eyebrow">CUSTOMER DETAILS</p>
+        <h3>RFM customer profile</h3>
+
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Recency</th>
+                        <th>Frequency</th>
+                        <th>Monetary value</th>
+                        <th>Segment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for customer in segmentation.customers %}
+                    <tr>
+                        <td>{{ customer.customer_id }}</td>
+                        <td>{{ customer.recency_days }} days</td>
+                        <td>{{ customer.frequency }} orders</td>
+                        <td>
+                            ₹{{ "{:,.2f}".format(customer.monetary) }}
+                        </td>
+                        <td>
+                            <span class="customer-segment">
+                                {{ customer.segment }}
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+</main>
+
+{% if not error %}
+<script>
+const segmentData = {{ segmentation.summary | tojson }};
+
+new Chart(document.getElementById("segmentChart"), {
+    type: "doughnut",
+    data: {
+        labels: segmentData.map(item => item.segment),
+        datasets: [{
+            data: segmentData.map(item => item.customers),
+            backgroundColor: [
+                "#a78bfa",
+                "#34d399",
+                "#22d3ee",
+                "#fbbf24",
+                "#fb7185",
+                "#64748b"
+            ],
+            borderColor: "#111827",
+            borderWidth: 5
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "68%",
+        plugins: {
+            legend: {
+                position: "bottom",
+                labels: {
+                    color: "#cbd5e1",
+                    usePointStyle: true
+                }
+            }
+        }
+    }
+});
+</script>
+{% endif %}
+</body>
+</html>
