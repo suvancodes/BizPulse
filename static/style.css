@@ -647,10 +647,7 @@ button:hover,
 }
 
 .upload-footer {
-    margin-top: 65px;
-    color: #64748b;
-    font-size: 12px;
-    text-align: center;
+    margin: 24px 0 18px;
 }
 
 @media (max-width: 800px) {
@@ -2252,5 +2249,106 @@ button:hover,
         width: 100%;
         margin-left: 0;
         text-align: center;
+    }
+}
+
+.sample-data-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 28px 0;
+    padding: 22px 24px;
+    border: 1px solid rgba(139, 92, 246, .35);
+    border-radius: 18px;
+    background: linear-gradient(
+        135deg,
+        rgba(139, 92, 246, .14),
+        rgba(34, 211, 238, .08)
+    );
+}
+
+.sample-data-panel h3 {
+    margin: 6px 0;
+}
+
+.sample-data-panel .muted {
+    margin: 0;
+}
+
+@media (max-width: 700px) {
+    .sample-data-panel {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .sample-data-panel button {
+        width: 100%;
+    }
+}
+
+.sample-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    margin: 28px 0 36px;
+    padding: 30px 34px;
+    border: 1px solid rgba(167, 139, 250, .65);
+    border-radius: 22px;
+    background:
+        radial-gradient(circle at 85% 50%, rgba(34, 211, 238, .22), transparent 35%),
+        linear-gradient(120deg, #241641, #102b35);
+    box-shadow: 0 12px 35px rgba(124, 58, 237, .25);
+}
+
+.sample-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    color: #ddd6fe;
+    background: rgba(139, 92, 246, .25);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.sample-hero h2 {
+    margin: 12px 0 8px;
+    color: #fff;
+    font-size: 26px;
+}
+
+.sample-hero p {
+    margin: 0;
+    color: #cbd5e1;
+}
+
+.sample-hero-button {
+    min-width: 210px;
+    padding: 15px 22px;
+    border: 0;
+    border-radius: 12px;
+    color: #fff;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    box-shadow: 0 8px 22px rgba(139, 92, 246, .45);
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.sample-hero-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(139, 92, 246, .65);
+}
+
+@media (max-width: 700px) {
+    .sample-hero {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 24px;
+    }
+
+    .sample-hero-button {
+        width: 100%;
     }
 }

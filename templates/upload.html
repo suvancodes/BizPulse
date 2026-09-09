@@ -144,9 +144,24 @@
         </section>
     </form>
 
-    <footer class="upload-footer">
-        Your files are processed securely and only the latest upload is retained.
-    </footer>
+
+
+    <section class="sample-hero">
+        <div class="sample-hero-content">
+            <span class="sample-badge">✨ QUICK START</span>
+            <h2>Explore BizPulse instantly</h2>
+            <p>
+                No files ready? Load our sample business data and see the
+                dashboard in action.
+            </p>
+        </div>
+
+        <form method="post" action="{{ url_for('use_sample_data') }}">
+            <button class="sample-hero-button" type="submit">
+                Try sample dashboard →
+            </button>
+        </form>
+    </section>
 </main>
 
 <script>

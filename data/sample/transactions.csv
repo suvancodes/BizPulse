@@ -1,0 +1,13 @@
+transaction_id,date,customer_id,product_id,product_name,category,quantity,unit_price,cost_price,discount,store_id,region,payment_method
+F001,2026-01-05,C101,P01,Cotton T-Shirt,Clothing,2,799,420,50,S01,West Bengal,UPI
+F002,2026-01-12,C102,P02,Slim Fit Jeans,Clothing,1,1499,850,100,S01,West Bengal,Card
+F003,2026-01-20,C103,P03,Running Shoes,Footwear,1,2499,1500,150,S02,Jharkhand,UPI
+F004,2026-02-02,C101,P04,Hoodie,Clothing,1,1799,950,100,S01,West Bengal,UPI
+F005,2026-02-10,C104,P05,Casual Sneakers,Footwear,2,1999,1200,200,S03,Odisha,Card
+F006,2026-02-18,C105,P06,Denim Jacket,Clothing,1,2299,1350,100,S02,Bihar,Cash
+F007,2026-02-25,C102,P01,Cotton T-Shirt,Clothing,3,799,420,50,S01,West Bengal,UPI
+F008,2026-03-03,C103,P03,Running Shoes,Footwear,1,2499,1500,0,S02,Jharkhand,Card
+F009,2026-03-11,C106,P07,Leather Belt,Accessories,2,899,450,50,S03,Odisha,UPI
+F010,2026-03-19,C101,P02,Slim Fit Jeans,Clothing,2,1499,850,100,S01,West Bengal,UPI
+F011,2026-03-27,C102,P04,Hoodie,Clothing,1,1799,950,0,S01,West Bengal,Card
+F012,2026-03-30,C107,P08,Sports Watch,Accessories,1,2999,1900,200,S03,Bihar,UPI

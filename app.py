@@ -1,7 +1,9 @@
 import os
+import shutil
 from pathlib import Path
 
 import pandas as pd
+
 from flask import Flask, redirect, render_template, request, url_for
 
 from backend.analytics.inventory import (
@@ -18,12 +20,13 @@ from backend.analytics.profitability import calculate_profitability
 
 app = Flask(__name__)
 
+BASE_DIR = Path(__file__).resolve().parent
 IS_VERCEL = os.environ.get("VERCEL") == "1"
 
 if IS_VERCEL:
     UPLOAD_FOLDER = Path("/tmp/bizpulse/uploads")
 else:
-    UPLOAD_FOLDER = Path("data/uploads")
+    UPLOAD_FOLDER = BASE_DIR / "data" / "uploads"
 
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
@@ -58,6 +61,8 @@ INVENTORY_COLUMNS = {
     "stock_quantity",
     "reorder_level",
 }
+
+SAMPLE_FOLDER = BASE_DIR / "data" / "sample"
 
 
 @app.route("/")
@@ -388,6 +393,23 @@ def profitability_page():
         "profitability.html",
         profitability=calculate_profitability(transactions),
     )
+
+
+@app.route("/use-sample-data", methods=["POST"])
+def use_sample_data():
+    sample_files = {
+        "transactions.csv": CURRENT_DATASET,
+        "current_products.csv": PRODUCTS_DATASET,
+        "current_inventory.csv": INVENTORY_DATASET,
+    }
+
+    for filename, destination in sample_files.items():
+        source = SAMPLE_FOLDER / filename
+
+        if source.exists():
+            shutil.copyfile(source, destination)
+
+    return redirect(url_for("dashboard_page"))
 
 
 def load_csv(path):
