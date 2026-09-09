@@ -1,5 +1,4 @@
 Flask
 pandas
-Werkzeug
-scikit-learn 
-joblib
+numpy
+scikit-learn

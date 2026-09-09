@@ -1,0 +1,5 @@
+cd /Users/apple/BizPulse
+npx vercel login
+npx vercel
+
+
