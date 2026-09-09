@@ -1,9 +1,9 @@
-transaction_id,date,customer_id,product_id,product_name,category,quantity,unit_price,region
-T000001,2026-03-01,C085,P001,Wireless Mouse,Accessories,11,1499,East
-T000002,2026-03-01,C191,P002,Mechanical Keyboard,Accessories,7,4499,West
-T000003,2026-03-01,C250,P003,USB-C Cable,Accessories,17,499,North
-T000004,2026-03-01,C004,P004,Laptop Stand,Accessories,5,1899,South
-T000005,2026-03-01,C179,P005,Webcam,Electronics,6,3299,West
+transaction_id,date,customer_id,product_id,product_name,category,quantity,unit_price,cost_price,region
+T000001,2026-03-01,C085,P001,Wireless Mouse,Accessories,11,1499,1299,East
+T000002,2026-03-01,C191,P002,Mechanical Keyboard,Accessories,7,4499,3999,West
+T000003,2026-03-01,C250,P003,USB-C Cable,Accessories,17,499,449,North
+T000004,2026-03-01,C004,P004,Laptop Stand,Accessories,5,1899,1699,South
+T000005,2026-03-01,C179,P005,Webcam,Electronics,6,3299,2899 ,West
 T000006,2026-03-01,C130,P006,Bluetooth Speaker,Electronics,9,2499,East
 T000007,2026-03-01,C240,P007,Power Bank,Electronics,9,1799,Central
 T000008,2026-03-01,C001,P008,Wireless Headphones,Audio,4,3999,North

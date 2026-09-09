@@ -43,6 +43,7 @@ REQUIRED_COLUMNS = {
     "category",
     "quantity",
     "unit_price",
+    "cost_price",
 }
 
 LOCATION_COLUMNS = {
@@ -59,6 +60,7 @@ INVENTORY_COLUMNS = {
     "product_id",
     "date",
     "stock_quantity",
+    "cost_price",
     "reorder_level",
 }
 
