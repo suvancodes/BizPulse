@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizPulse | Profitability</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<main class="dashboard-shell">
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-mark">B</div>
+            <div>
+                <h1>BizPulse</h1>
+                <span>Profitability intelligence</span>
+            </div>
+        </div>
+
+        <nav class="dashboard-nav">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/analytics">Analytics</a>
+            <a href="/customers">Customers</a>
+            <a href="/inventory">Inventory</a>
+            <a href="/forecast">Forecast</a>
+            <a class="active" href="/profitability">Profitability</a>
+            <a class="upload-button" href="/upload">Upload data</a>
+        </nav>
+    </header>
+
+    <section class="welcome-section">
+        <p class="eyebrow">PROFITABILITY ANALYSIS</p>
+        <h2>Understand your real margins</h2>
+        <p class="muted">
+            Compare revenue, cost, profit, and product margins.
+        </p>
+    </section>
+
+    {% if not profitability.available %}
+    <section class="dashboard-card message">
+        <h3>Profitability data unavailable</h3>
+        <p>
+            Upload a transactions file containing:
+            <strong>cost_price</strong>.
+        </p>
+        <p>
+            Missing columns:
+            {{ profitability.missing | join(", ") }}
+        </p>
+    </section>
+    {% else %}
+
+    <section class="profitability-kpis">
+        <article class="profitability-kpi">
+            <span>Total revenue</span>
+            <strong>
+                ₹{{ "{:,.2f}".format(profitability.total_revenue) }}
+            </strong>
+        </article>
+
+        <article class="profitability-kpi">
+            <span>Total cost</span>
+            <strong>
+                ₹{{ "{:,.2f}".format(profitability.total_cost) }}
+            </strong>
+        </article>
+
+        <article class="profitability-kpi profit">
+            <span>Gross profit</span>
+            <strong>
+                ₹{{ "{:,.2f}".format(profitability.gross_profit) }}
+            </strong>
+        </article>
+
+        <article class="profitability-kpi margin">
+            <span>Gross margin</span>
+            <strong>{{ profitability.margin }}%</strong>
+        </article>
+    </section>
+
+    <section class="profitability-chart-grid">
+        <article class="dashboard-card">
+            <p class="eyebrow">PRODUCT PERFORMANCE</p>
+            <h3>Profit by product</h3>
+            <div class="profitability-chart">
+                <canvas id="profitChart"></canvas>
+            </div>
+        </article>
+
+        <article class="dashboard-card">
+            <p class="eyebrow">MARGIN ANALYSIS</p>
+            <h3>Product margins</h3>
+            <div class="profitability-chart">
+                <canvas id="marginChart"></canvas>
+            </div>
+        </article>
+    </section>
+
+    <section class="dashboard-card">
+        <p class="eyebrow">PRODUCT PROFITABILITY</p>
+        <h3>Detailed breakdown</h3>
+
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Revenue</th>
+                        <th>Cost</th>
+                        <th>Profit</th>
+                        <th>Margin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for product in profitability.products %}
+                    <tr>
+                        <td>{{ product.product_name }}</td>
+                        <td>₹{{ "{:,.2f}".format(product.revenue) }}</td>
+                        <td>₹{{ "{:,.2f}".format(product.cost) }}</td>
+                        <td>₹{{ "{:,.2f}".format(product.profit) }}</td>
+                        <td>{{ product.margin }}%</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+</main>
+
+{% if profitability.available %}
+<script>
+const productData = {{ profitability.products | tojson }};
+
+const topProducts = productData.slice(0, 10);
+
+new Chart(document.getElementById("profitChart"), {
+    type: "bar",
+    data: {
+        labels: topProducts.map(item => item.product_name),
+        datasets: [{
+            label: "Gross profit",
+            data: topProducts.map(item => item.profit),
+            backgroundColor: "#34d399",
+            borderRadius: 7
+        }]
+    },
+    options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: { color: "#94a3b8" },
+                grid: {
+                    color: "rgba(148, 163, 184, .12)"
+                }
+            },
+            y: {
+                ticks: { color: "#cbd5e1" },
+                grid: { display: false }
+            }
+        }
+    }
+});
+
+const marginProducts = [...productData]
+    .sort((a, b) => b.margin - a.margin)
+    .slice(0, 10);
+
+new Chart(document.getElementById("marginChart"), {
+    type: "bar",
+    data: {
+        labels: marginProducts.map(item => item.product_name),
+        datasets: [{
+            label: "Margin %",
+            data: marginProducts.map(item => item.margin),
+            backgroundColor: "#a78bfa",
+            borderRadius: 7
+        }]
+    },
+    options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    color: "#94a3b8",
+                    callback: value => value + "%"
+                },
+                grid: {
+                    color: "rgba(148, 163, 184, .12)"
+                }
+            },
+            y: {
+                ticks: { color: "#cbd5e1" },
+                grid: { display: false }
+            }
+        }
+    }
+});
+</script>
+{% endif %}
+</body>
+</html>

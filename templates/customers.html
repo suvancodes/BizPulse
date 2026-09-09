@@ -24,6 +24,7 @@
             <a class="active" href="/customers">Customers</a>
             <a href="/inventory">Inventory</a>
             <a href="/forecast">Forecast</a>
+            <a href="/profitability">Profitability</a>
             <a class="upload-button" href="/upload">Upload data</a>
         </nav>
     </header>
@@ -101,8 +102,27 @@
     </section>
 
     <section class="dashboard-card">
-        <p class="eyebrow">CUSTOMER DETAILS</p>
-        <h3>RFM customer profile</h3>
+        <div class="rfm-table-header">
+            <div>
+                <p class="eyebrow">CUSTOMER DETAILS</p>
+                <h3>RFM customer profile</h3>
+                <p class="table-result-count" id="customerResultCount">
+                    Showing {{ segmentation.total_customers }} customers
+                </p>
+            </div>
+
+            <label class="segment-filter" for="segmentFilter">
+                <span>Segment</span>
+                <select id="segmentFilter">
+                    <option value="all">All segments</option>
+                    {% for item in segmentation.summary %}
+                        <option value="{{ item.segment }}">
+                            {{ item.segment }} · {{ item.customers }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
 
         <div class="table-wrapper">
             <table class="data-table">
@@ -115,9 +135,10 @@
                         <th>Segment</th>
                     </tr>
                 </thead>
-                <tbody>
+
+                <tbody id="customerTableBody">
                 {% for customer in segmentation.customers %}
-                    <tr>
+                    <tr data-segment="{{ customer.segment }}">
                         <td>{{ customer.customer_id }}</td>
                         <td>{{ customer.recency_days }} days</td>
                         <td>{{ customer.frequency }} orders</td>
@@ -131,6 +152,10 @@
                         </td>
                     </tr>
                 {% endfor %}
+
+                    <tr id="noCustomersRow" hidden>
+                        <td colspan="5">No customers found for this segment.</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -174,6 +199,35 @@ new Chart(document.getElementById("segmentChart"), {
             }
         }
     }
+});
+
+const segmentFilter = document.getElementById("segmentFilter");
+const customerRows = document.querySelectorAll(
+    "#customerTableBody tr[data-segment]"
+);
+const noCustomersRow = document.getElementById("noCustomersRow");
+const customerResultCount = document.getElementById("customerResultCount");
+
+segmentFilter.addEventListener("change", function () {
+    const selectedSegment = this.value;
+    let visibleCustomers = 0;
+
+    customerRows.forEach(row => {
+        const matches =
+            selectedSegment === "all" ||
+            row.dataset.segment === selectedSegment;
+
+        row.hidden = !matches;
+
+        if (matches) {
+            visibleCustomers++;
+        }
+    });
+
+    noCustomersRow.hidden = visibleCustomers !== 0;
+
+    customerResultCount.textContent =
+        `Showing ${visibleCustomers} customer${visibleCustomers === 1 ? "" : "s"}`;
 });
 </script>
 {% endif %}

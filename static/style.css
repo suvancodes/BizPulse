@@ -303,14 +303,23 @@ button:hover,
     min-height: 350px;
 }
 
-.chart-container {
+.chart-container,
+.forecast-chart,
+.inventory-doughnut,
+.inventory-bar,
+.customer-dashboard-chart {
     position: relative;
-    height: 320px;
+    width: 100%;
+    height: 350px;
 }
 
-.chart-grid canvas {
+.chart-container canvas,
+.forecast-chart canvas,
+.inventory-doughnut canvas,
+.inventory-bar canvas,
+.customer-dashboard-chart canvas {
     width: 100% !important;
-    height: 270px !important;
+    height: 100% !important;
 }
 
 .card-heading {
@@ -1549,8 +1558,16 @@ button:hover,
 
 .forecast-chart {
     position: relative;
-    height: 380px;
-    margin-top: 28px;
+    display: block;
+    width: 100%;
+    height: 360px;
+    margin-top: 24px;
+}
+
+.forecast-chart canvas {
+    display: block !important;
+    width: 100% !important;
+    height: 360px !important;
 }
 
 @media (max-width: 900px) {
@@ -1751,5 +1768,489 @@ button:hover,
 @media (max-width: 800px) {
     .customer-dashboard-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+.pdf-button {
+    margin-left: auto;
+    padding: 10px 16px;
+    border: 1px solid rgb(167 139 250 / 35%);
+    border-radius: 10px;
+    color: #fff;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.pdf-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgb(124 58 237 / 35%);
+}
+
+/* Web-style dashboard PDF */
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 10mm;
+    }
+
+    *,
+    *::before,
+    *::after {
+        color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        animation: none !important;
+        transition: none !important;
+    }
+
+    html,
+    body {
+        width: 100%;
+        min-height: 100%;
+        color: var(--text) !important;
+        background: var(--bg) !important;
+    }
+
+    body {
+        font-size: 11px;
+    }
+
+    .dashboard-shell {
+        width: 100% !important;
+        max-width: none !important;
+        padding: 12px 0 !important;
+    }
+
+    .topbar,
+    .welcome-section,
+    .kpi-grid,
+    .chart-grid,
+    .inventory-chart-grid,
+    .customer-dashboard-grid,
+    .dashboard-card,
+    .kpi-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .topbar {
+        display: flex !important;
+        margin-bottom: 24px !important;
+    }
+
+    .dashboard-nav,
+    .pdf-button,
+    .upload-button,
+    button {
+        display: none !important;
+    }
+
+    .brand-mark {
+        box-shadow: none !important;
+    }
+
+    .dashboard-card,
+    .kpi-card,
+    .card {
+        color: var(--text) !important;
+        background: var(--surface) !important;
+        border-color: var(--border) !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+    }
+
+    .kpi-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .chart-grid,
+    .customer-dashboard-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 12px !important;
+    }
+
+    .dashboard-card {
+        padding: 16px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .chart-container,
+    .customer-dashboard-chart,
+    .inventory-doughnut,
+    .inventory-bar {
+        height: 220px !important;
+    }
+
+    h1,
+    h2,
+    h3,
+    p,
+    span,
+    strong,
+    small,
+    th,
+    td {
+        color: inherit !important;
+    }
+
+    .muted,
+    .brand span,
+    .kpi-card small,
+    .eyebrow {
+        color: #94a3b8 !important;
+    }
+
+    .eyebrow {
+        color: #a78bfa !important;
+    }
+
+    canvas {
+        max-width: 100% !important;
+    }
+}
+
+.rfm-table-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 22px;
+}
+
+.rfm-table-header h3 {
+    margin: 0;
+}
+
+.table-result-count {
+    margin: 7px 0 0;
+    color: #64748b;
+    font-size: 0.82rem;
+}
+
+.segment-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 10px 7px 14px;
+    border: 1px solid rgba(167, 139, 250, 0.35);
+    border-radius: 12px;
+    background: rgba(30, 41, 59, 0.75);
+    color: #cbd5e1;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.segment-filter select {
+    min-width: 190px;
+    padding: 9px 34px 9px 12px;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    outline: none;
+    background: #111827;
+    color: #f8fafc;
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 600;
+    letter-spacing: normal;
+    text-transform: none;
+    cursor: pointer;
+}
+
+.segment-filter select:hover,
+.segment-filter select:focus {
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.14);
+}
+
+#noCustomersRow td {
+    padding: 28px;
+    color: #94a3b8;
+    text-align: center;
+}
+
+@media (max-width: 700px) {
+    .rfm-table-header {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .segment-filter {
+        justify-content: space-between;
+    }
+
+    .segment-filter select {
+        min-width: 0;
+        flex: 1;
+    }
+}
+
+.profitability-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.profitability-kpi {
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    background: rgb(255 255 255 / 4%);
+}
+
+.profitability-kpi span,
+.profitability-kpi strong {
+    display: block;
+}
+
+.profitability-kpi span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.profitability-kpi strong {
+    margin-top: 12px;
+    font-size: 23px;
+}
+
+.profitability-kpi.profit strong {
+    color: #34d399;
+}
+
+.profitability-kpi.margin strong {
+    color: #a78bfa;
+}
+
+.profitability-chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.profitability-chart {
+    position: relative;
+    height: 330px;
+    margin-top: 20px;
+}
+
+.dashboard-profitability {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 22px 0;
+}
+
+.dashboard-profitability strong {
+    display: block;
+    margin: 8px 0 4px;
+    color: #34d399;
+    font-size: 28px;
+}
+
+.dashboard-profitability span {
+    color: var(--muted);
+}
+
+.secondary-button {
+    padding: 10px 14px;
+    border: 1px solid rgb(139 92 246 / 40%);
+    border-radius: 9px;
+    color: #c4b5fd;
+    text-decoration: none;
+    background: rgb(139 92 246 / 12%);
+}
+
+@media (max-width: 850px) {
+    .profitability-kpis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .profitability-kpi {
+        min-height: 120px;
+    }
+    .profitability-chart-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .profitability-kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-profitability {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+    }
+}
+
+.profitability-dashboard-grid {
+    margin-top: 24px;
+}
+
+.profitability-dashboard-grid .chart-container {
+    min-height: 360px;
+}
+
+.dashboard-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.business-snapshot {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0 0 24px;
+}
+
+.snapshot-card {
+    min-height: 122px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background:
+        linear-gradient(145deg, rgb(139 92 246 / 12%), transparent),
+        var(--surface);
+}
+
+.snapshot-card span,
+.snapshot-card strong,
+.snapshot-card small {
+    display: block;
+}
+
+.snapshot-card span,
+.snapshot-card small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.snapshot-card strong {
+    margin: 13px 0 5px;
+    font-size: 24px;
+}
+
+.snapshot-card strong.positive {
+    color: var(--green);
+}
+
+.profitability-dashboard-grid {
+    margin-bottom: 0;
+}
+
+.profitability-dashboard-grid .dashboard-card {
+    min-height: 400px;
+}
+
+@media (max-width: 900px) {
+    .business-snapshot {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .section-heading-row,
+    .dashboard-actions {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .business-snapshot {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-actions {
+        width: 100%;
+    }
+
+    .dashboard-actions .pdf-button {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+.section-heading-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 34px 0 18px;
+}
+
+.section-heading-row h3 {
+    margin: 7px 0 5px;
+    font-size: 22px;
+}
+
+.section-heading-row .muted {
+    margin: 0;
+    font-size: 13px;
+}
+
+.dashboard-section {
+    margin-top: 34px;
+}
+
+.profitability-section {
+    padding-top: 8px;
+}
+
+.profitability-section .profitability-dashboard-grid {
+    margin-top: 20px;
+}
+
+.snapshot-card {
+    transition: transform .2s ease, border-color .2s ease;
+}
+
+.snapshot-card:hover {
+    transform: translateY(-4px);
+    border-color: rgb(167 139 250 / 60%);
+}
+
+.snapshot-card .margin-value {
+    color: var(--primary-light);
+}
+
+.dashboard-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.dashboard-actions .pdf-button {
+    margin-left: 0;
+}
+
+.secondary-button:hover {
+    border-color: var(--primary-light);
+    background: rgb(139 92 246 / 22%);
+}
+
+@media (max-width: 760px) {
+    .section-heading-row,
+    .dashboard-actions {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .dashboard-actions {
+        width: 100%;
+    }
+
+    .dashboard-actions .pdf-button,
+    .section-heading-row .secondary-button {
+        width: 100%;
+        margin-left: 0;
+        text-align: center;
     }
 }

@@ -25,20 +25,35 @@
             <a href="/customers">Customers</a>
             <a href="/inventory">Inventory</a>
             <a href="/forecast">Forecast</a>
+            
             <a class="upload-button" href="/upload">Upload data</a>
         </nav>
     </header>
 
     <section class="welcome-section">
         <div>
-            <p class="eyebrow">DATASET OVERVIEW</p>
+            <p class="eyebrow">BUSINESS OVERVIEW</p>
             <h2>Your business at a glance</h2>
             <p class="muted">{{ filename }}</p>
         </div>
 
-        <span class="status-badge">
-            <span></span> Analysis complete
-        </span>
+        <div class="dashboard-actions">
+            <span class="status-badge">
+                <span></span> Analysis complete
+            </span>
+
+            <button class="pdf-button" type="button" onclick="window.print()">
+                ↓ Download PDF
+            </button>
+        </div>
+    </section>
+
+    <section class="section-heading-row">
+        <div>
+            <p class="eyebrow">BUSINESS PERFORMANCE</p>
+            <h3>Sales overview</h3>
+            <p class="muted">Monitor revenue and order activity over time.</p>
+        </div>
     </section>
 
     <section class="kpi-grid">
@@ -184,6 +199,43 @@
 </section>
 {% endif %}
 
+{% if profitability.available and profitability.products %}
+<section class="chart-grid profitability-dashboard-grid">
+    <article class="dashboard-card">
+        <p class="eyebrow">PRODUCT PERFORMANCE</p>
+        <h3>Profit by product</h3>
+        <div class="chart-container">
+            <canvas id="dashboardProfitChart"></canvas>
+        </div>
+    </article>
+
+    <article class="dashboard-card">
+        <p class="eyebrow">MARGIN ANALYSIS</p>
+        <h3>Product margins</h3>
+        <div class="chart-container">
+            <canvas id="dashboardMarginChart"></canvas>
+        </div>
+    </article>
+</section>
+{% endif %}
+
+{% if profitability.available %}
+<section class="dashboard-card dashboard-profitability">
+    <div>
+        <p class="eyebrow">PROFITABILITY SNAPSHOT</p>
+        <h3>Gross profit</h3>
+        <strong>
+            ₹{{ "{:,.2f}".format(profitability.gross_profit) }}
+        </strong>
+        <span>{{ profitability.margin }}% margin</span>
+    </div>
+
+    <a href="/profitability" class="secondary-button">
+        View profitability
+    </a>
+</section>
+{% endif %}
+
 </main>
 
 <nav class="dashboard-nav">
@@ -192,7 +244,12 @@
     <a href="/inventory">Inventory</a>
     <a href="/forecast">Forecast</a>
     <a class="upload-button" href="/upload">Upload data</a>
+    <a href="/profitability">Profitability</a>
 </nav>
+
+<button class="pdf-button" type="button" onclick="window.print()">
+    ↓ Download PDF
+</button>
 
 <script>
 const dailyData = {{ analytics.daily_revenue | tojson }};
@@ -415,6 +472,86 @@ new Chart(document.getElementById("dashboardSegmentBarChart"), {
     }
 });
 {% endif %}
+
+{% if profitability.available and profitability.products %}
+const profitabilityProducts = {{ profitability.products | tojson }};
+
+const profitabilityLabels = profitabilityProducts.map(
+    item => item.product_name
+);
+
+const horizontalChartOptions = {
+    indexAxis: "y",
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: { display: false }
+    },
+    scales: {
+        x: {
+            beginAtZero: true,
+            ticks: { color: "#94a3b8" },
+            grid: {
+                color: "rgba(148, 163, 184, .12)"
+            }
+        },
+        y: {
+            ticks: { color: "#cbd5e1" },
+            grid: { display: false }
+        }
+    }
+};
+
+new Chart(document.getElementById("dashboardProfitChart"), {
+    type: "bar",
+    data: {
+        labels: profitabilityLabels,
+        datasets: [{
+            data: profitabilityProducts.map(item => item.profit),
+            backgroundColor: "#34d399",
+            borderRadius: 8,
+            barThickness: 18
+        }]
+    },
+    options: horizontalChartOptions
+});
+
+new Chart(document.getElementById("dashboardMarginChart"), {
+    type: "bar",
+    data: {
+        labels: profitabilityLabels,
+        datasets: [{
+            data: profitabilityProducts.map(item => item.margin),
+            backgroundColor: "#a78bfa",
+            borderRadius: 8,
+            barThickness: 18
+        }]
+    },
+    options: {
+        ...horizontalChartOptions,
+        scales: {
+            ...horizontalChartOptions.scales,
+            x: {
+                ...horizontalChartOptions.scales.x,
+                max: 100,
+                ticks: {
+                    color: "#94a3b8",
+                    callback: value => `${value}%`
+                }
+            }
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: context => `${context.raw}% margin`
+                }
+            },
+            legend: { display: false }
+        }
+    }
+});
+{% endif %}
+
 </script>
 </body>
 </html>

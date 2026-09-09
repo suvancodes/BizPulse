@@ -12,6 +12,7 @@ from backend.analytics.inventory import (
 from backend.analytics.sales import calculate_sales_analytics
 from backend.analytics.forecasting import forecast_sales
 from backend.analytics.customers import calculate_customer_segments
+from backend.analytics.profitability import calculate_profitability
 
 
 app = Flask(__name__)
@@ -64,7 +65,26 @@ def dashboard_page():
     inventory = load_current_inventory()
 
     if transactions is None:
-        return redirect(url_for("upload_dataset"))
+        return render_template(
+            "dashboard.html",
+            filename="No uploaded data",
+            analytics=empty_sales_analytics(),
+            forecast=None,
+            inventory_analytics=None,
+            segmentation={
+                "customers": [],
+                "summary": [],
+                "total_customers": 0,
+            },
+            profitability={
+                "available": False,
+                "total_revenue": 0,
+                "total_cost": 0,
+                "gross_profit": 0,
+                "profit_margin": 0,
+                "products": [],
+            },
+        )
 
     transactions = normalize_columns(transactions)
 
@@ -86,6 +106,8 @@ def dashboard_page():
             transactions,
         )
 
+    profitability = calculate_profitability(transactions)
+
     return render_template(
         "dashboard.html",
         filename="Current uploaded data",
@@ -93,6 +115,7 @@ def dashboard_page():
         forecast=forecast_sales(transactions),
         inventory_analytics=inventory_analytics,
         segmentation=segmentation,
+        profitability=profitability,
     )
 
 
@@ -342,6 +365,21 @@ def customers_page():
         "customers.html",
         segmentation=calculate_customer_segments(transactions),
         error=None,
+    )
+
+
+@app.route("/profitability")
+def profitability_page():
+    transactions = load_current_transactions()
+
+    if transactions is None:
+        return redirect(url_for("upload_dataset"))
+
+    transactions = normalize_columns(transactions)
+
+    return render_template(
+        "profitability.html",
+        profitability=calculate_profitability(transactions),
     )
 
 
