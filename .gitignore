@@ -1,1 +1,6 @@
 bizpulse/**
+.vercel
+
+bizpulse/
+.venv/
+venv/
