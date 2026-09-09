@@ -1,0 +1,9 @@
+.git
+.vercel
+__pycache__
+*.pyc
+.ipynb_checkpoints
+*.ipynb
+data/uploads/*
+.env
+.DS_Store
