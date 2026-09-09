@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -17,7 +18,13 @@ from backend.analytics.profitability import calculate_profitability
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = Path("data/uploads")
+IS_VERCEL = os.environ.get("VERCEL") == "1"
+
+if IS_VERCEL:
+    UPLOAD_FOLDER = Path("/tmp/bizpulse/uploads")
+else:
+    UPLOAD_FOLDER = Path("data/uploads")
+
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
 CURRENT_DATASET = UPLOAD_FOLDER / "transactions.csv"
