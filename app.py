@@ -60,7 +60,6 @@ INVENTORY_COLUMNS = {
     "product_id",
     "date",
     "stock_quantity",
-    "cost_price",
     "reorder_level",
 }
 
