@@ -21,10 +21,15 @@
         <nav class="dashboard-nav">
             <a href="/dashboard">Dashboard</a>
             <a href="/analytics">Analytics</a>
-            <a href="/customers" >Customers</a>
-            <a href="/inventory" class="active">Inventory</a>
+            <a href="/customers">Customers</a>
+            <a class="active" href="/inventory">Inventory</a>
             <a href="/forecast">Forecast</a>
             <a href="/profitability">Profitability</a>
+
+            <button type="button" class="pdf-button" onclick="window.print()">
+                ↓ Download PDF
+            </button>
+
             <a class="upload-button" href="/upload">Upload data</a>
         </nav>
     </header>
@@ -108,6 +113,16 @@
         </div>
     </section>
 </main>
+
+<button class="download-pdf" onclick="downloadPDF()">
+    ↓ Download PDF
+</button>
+
+<script>
+function downloadPDF() {
+    window.print();
+}
+</script>
 
 <script>
 const inventoryData = {{ inventory_analytics.products | tojson }};

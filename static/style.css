@@ -1769,22 +1769,19 @@ button:hover,
 }
 
 .pdf-button {
-    margin-left: auto;
-    padding: 10px 16px;
-    border: 1px solid rgb(167 139 250 / 35%);
-    border-radius: 10px;
-    color: #fff;
-    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    border: 0;
     cursor: pointer;
+    color: #ffffff;
+    background: #7c3aed;
+    padding: 11px 16px;
+    border-radius: 10px;
     font-weight: 700;
 }
 
 .pdf-button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgb(124 58 237 / 35%);
+    background: #8b5cf6;
 }
 
-/* Web-style dashboard PDF */
 @media print {
     @page {
         size: A4 landscape;
@@ -1820,26 +1817,8 @@ button:hover,
     }
 
     .topbar,
-    .welcome-section,
-    .kpi-grid,
-    .chart-grid,
-    .inventory-chart-grid,
-    .customer-dashboard-grid,
-    .dashboard-card,
-    .kpi-card {
-        break-inside: avoid;
-        page-break-inside: avoid;
-    }
-
-    .topbar {
-        display: flex !important;
-        margin-bottom: 24px !important;
-    }
-
-    .dashboard-nav,
     .pdf-button,
-    .upload-button,
-    button {
+    .upload-button {
         display: none !important;
     }
 

@@ -19,14 +19,18 @@
             </div>
         </div>
 
-        <nav class="dashboard-nav">
-            <a href="/dashboard" class="active">Dashboard</a>
+                <nav class="dashboard-nav">
+            <a class="active" href="/dashboard">Dashboard</a>
             <a href="/analytics">Analytics</a>
             <a href="/customers">Customers</a>
             <a href="/inventory">Inventory</a>
             <a href="/forecast">Forecast</a>
             <a href="/profitability">Profitability</a>
-            
+
+            <button type="button" class="pdf-button" onclick="window.print()">
+                ↓ Download PDF
+            </button>
+
             <a class="upload-button" href="/upload">Upload data</a>
         </nav>
     </header>
@@ -43,9 +47,6 @@
                 <span></span> Analysis complete
             </span>
 
-            <button class="pdf-button" type="button" onclick="window.print()">
-                ↓ Download PDF
-            </button>
         </div>
     </section>
 

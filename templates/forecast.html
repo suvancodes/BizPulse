@@ -18,13 +18,18 @@
             </div>
         </div>
 
-        <nav class="dashboard-nav">
+                <nav class="dashboard-nav">
             <a href="/dashboard">Dashboard</a>
             <a href="/analytics">Analytics</a>
-            <a href="/customers" >Customers</a>
+            <a href="/customers">Customers</a>
             <a href="/inventory">Inventory</a>
             <a class="active" href="/forecast">Forecast</a>
             <a href="/profitability">Profitability</a>
+
+            <button type="button" class="pdf-button" onclick="window.print()">
+                ↓ Download PDF
+            </button>
+
             <a class="upload-button" href="/upload">Upload data</a>
         </nav>
     </header>
@@ -77,6 +82,10 @@
             <canvas id="forecastChart"></canvas>
         </div>
     </section>
+
+    <button class="download-pdf" onclick="downloadPDF()">
+        ↓ Download PDF
+    </button>
 </main>
 
 <script>
@@ -119,6 +128,10 @@ new Chart(document.getElementById("forecastChart"), {
         }
     }
 });
+
+function downloadPDF() {
+    window.print();
+}
 </script>
 </body>
 </html>
