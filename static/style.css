@@ -1783,20 +1783,42 @@ button:hover,
 }
 
 @media print {
+    @page {
+        size: A4 landscape;
+        margin: 10mm;
+    }
+
+    *,
+    *::before,
+    *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
     .no-print,
-    .topbar,
-    .dashboard-nav {
+    .pdf-button,
+    .download-pdf,
+    .upload-button {
         display: none !important;
     }
 
     body {
-        background: #ffffff !important;
-        color: #111827 !important;
+        background: #080b14 !important;
+        color: #f8fafc !important;
+    }
+
+    .dashboard-shell {
+        width: 100% !important;
+    }
+
+    .topbar {
+        display: flex !important;
     }
 
     .dashboard-card,
-    .profitability-kpi {
+    .forecast-metric {
         break-inside: avoid;
+        box-shadow: none !important;
     }
 }
 
