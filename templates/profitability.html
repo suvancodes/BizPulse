@@ -27,7 +27,10 @@
             <a href="/forecast">Forecast</a>
             <a href="/profitability" class="active">Profitability</a>
 
-            <button type="button" class="pdf-button" onclick="window.print()">
+            <button
+                type="button"
+                class="pdf-button no-print"
+                onclick="downloadPagePdf()">
                 ↓ Download PDF
             </button>
 
@@ -35,7 +38,7 @@
         </nav>
     </header>
 
-    <section class="welcome-section">
+    <section class="profitability-hero">
         <p class="eyebrow">PROFITABILITY ANALYSIS</p>
         <h2>Understand your real margins</h2>
         <p class="muted">
@@ -137,6 +140,17 @@
 
 {% if profitability.available %}
 <script>
+function downloadPagePdf() {
+    const originalTitle = document.title;
+
+    document.title = "BizPulse Profitability Report";
+    window.print();
+
+    setTimeout(() => {
+        document.title = originalTitle;
+    }, 1000);
+}
+
 const productData = {{ profitability.products | tojson }};
 
 const topProducts = productData.slice(0, 10);

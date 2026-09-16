@@ -1783,107 +1783,20 @@ button:hover,
 }
 
 @media print {
-    @page {
-        size: A4 landscape;
-        margin: 10mm;
-    }
-
-    *,
-    *::before,
-    *::after {
-        color-adjust: exact !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        animation: none !important;
-        transition: none !important;
-    }
-
-    html,
-    body {
-        width: 100%;
-        min-height: 100%;
-        color: var(--text) !important;
-        background: var(--bg) !important;
-    }
-
-    body {
-        font-size: 11px;
-    }
-
-    .dashboard-shell {
-        width: 100% !important;
-        max-width: none !important;
-        padding: 12px 0 !important;
-    }
-
+    .no-print,
     .topbar,
-    .pdf-button,
-    .upload-button {
+    .dashboard-nav {
         display: none !important;
     }
 
-    .brand-mark {
-        box-shadow: none !important;
+    body {
+        background: #ffffff !important;
+        color: #111827 !important;
     }
 
     .dashboard-card,
-    .kpi-card,
-    .card {
-        color: var(--text) !important;
-        background: var(--surface) !important;
-        border-color: var(--border) !important;
-        box-shadow: none !important;
-        backdrop-filter: none !important;
-    }
-
-    .kpi-grid {
-        grid-template-columns: repeat(4, 1fr) !important;
-        gap: 10px !important;
-    }
-
-    .chart-grid,
-    .customer-dashboard-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 12px !important;
-    }
-
-    .dashboard-card {
-        padding: 16px !important;
-        margin-bottom: 12px !important;
-    }
-
-    .chart-container,
-    .customer-dashboard-chart,
-    .inventory-doughnut,
-    .inventory-bar {
-        height: 220px !important;
-    }
-
-    h1,
-    h2,
-    h3,
-    p,
-    span,
-    strong,
-    small,
-    th,
-    td {
-        color: inherit !important;
-    }
-
-    .muted,
-    .brand span,
-    .kpi-card small,
-    .eyebrow {
-        color: #94a3b8 !important;
-    }
-
-    .eyebrow {
-        color: #a78bfa !important;
-    }
-
-    canvas {
-        max-width: 100% !important;
+    .profitability-kpi {
+        break-inside: avoid;
     }
 }
 
@@ -2330,4 +2243,26 @@ button:hover,
     .sample-hero-button {
         width: 100%;
     }
+}
+
+.profitability-hero {
+    display: block !important;
+    margin: 0 0 24px !important;
+}
+
+.profitability-hero .eyebrow {
+    margin: 0 0 8px;
+}
+
+.profitability-hero h2 {
+    max-width: none !important;
+    margin: 0 0 6px !important;
+    font-size: 32px !important;
+    line-height: 1.15 !important;
+    letter-spacing: -1px !important;
+}
+
+.profitability-hero .muted {
+    margin: 0 !important;
+    font-size: 14px !important;
 }
