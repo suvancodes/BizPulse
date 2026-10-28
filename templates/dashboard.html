@@ -26,14 +26,33 @@
             <a href="/inventory">Inventory</a>
             <a href="/forecast">Forecast</a>
             <a href="/profitability">Profitability</a>
+            <a href="/create-data">Add data</a>
 
             <button type="button" class="pdf-button" onclick="window.print()">
                 ↓ Download PDF
             </button>
 
             <a class="upload-button" href="/upload">Upload data</a>
+            <div class="auth-nav">
+                <small>{{ current_user.email }}</small>
+                <form method="post" action="{{ url_for('auth_logout') }}">
+                    <input type="hidden" name="csrf_token"
+                           value="{{ csrf_token }}">
+                    <button type="submit">Log out</button>
+                </form>
+            </div>
         </nav>
     </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </section>
+        {% endif %}
+    {% endwith %}
 
     <section class="welcome-section">
         <div>

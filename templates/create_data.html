@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizPulse | Create Dataset</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="data-upload-page">
+    <nav class="upload-nav">
+        <a class="brand" href="{{ url_for('index') }}">
+            <div class="brand-mark">B</div>
+            <div>
+                <h1>BizPulse</h1>
+                <span>Business intelligence, simplified</span>
+            </div>
+        </a>
+        <a class="text-button" href="{{ url_for('dashboard_page') }}">
+            Back to dashboard
+        </a>
+    </nav>
+
+    <section class="upload-header">
+        <p class="eyebrow">DATA WORKSPACE</p>
+        <h2>Create your dataset</h2>
+        <p>
+            Add as many transaction rows as you need. Select
+            <strong>Analyze dataset</strong> when you are finished.
+        </p>
+    </section>
+
+    {% if error %}
+        <div class="message error">
+            <strong>Could not save dataset</strong>
+            <span>{{ error }}</span>
+        </div>
+    {% endif %}
+
+    <form method="POST" class="record-form" id="recordForm">
+        <section class="record-form-card dataset-builder">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <div class="dataset-builder-header">
+                <div>
+                    <p class="eyebrow">TRANSACTION DATA</p>
+                    <h3>Sales rows</h3>
+                </div>
+            </div>
+            <div class="dataset-builder-actions">
+                <button type="button" class="secondary-button" id="addSampleRows">
+                    Add sample data
+                </button>
+                <button type="button" class="secondary-button" id="addRow">
+                    + Add row
+                </button>
+                <button type="button" class="remove-button" id="removeRow">
+                    Remove last row
+                </button>
+            </div>
+
+            <div class="dataset-table-wrap">
+                <table class="dataset-table">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID *</th>
+                            <th>Date *</th>
+                            <th>Customer ID *</th>
+                            <th>Product ID *</th>
+                            <th>Product name *</th>
+                            <th>Category *</th>
+                            <th>Quantity *</th>
+                            <th>Unit price *</th>
+                            <th>Cost price *</th>
+                            <th>Region / store *</th>
+                            <th>Discount</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="datasetRows">
+                    {% for row in rows %}
+                        <tr class="dataset-row">
+                            {% for field in [
+                                "transaction_id", "date", "customer_id",
+                                "product_id", "product_name", "category",
+                                "quantity", "unit_price", "cost_price",
+                                "region", "discount"
+                            ] %}
+                                <td>
+                                    <input
+                                        name="{{ field }}[]"
+                                        value="{{ row.get(field, '') }}"
+                                        {% if field == "date" %}type="date"
+                                        {% elif field in ["quantity", "unit_price", "cost_price", "discount"] %}type="number" step="any"
+                                        {% endif %}
+                                        {% if field in ["quantity"] %}min="0.01"
+                                        {% elif field in ["unit_price", "cost_price", "discount"] %}min="0"
+                                        {% endif %}
+                                        {% if field != "discount" %}required{% endif %}
+                                    >
+                                </td>
+                            {% endfor %}
+                            <td>
+                                <button type="button" class="remove-row"
+                                        title="Remove row">×</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="record-form-note">
+                Required fields are marked with *. Transaction IDs must be
+                unique. All rows are validated before anything is saved.
+            </p>
+            <button type="submit" class="analyze-button">
+                Analyze dataset →
+            </button>
+        </section>
+    </form>
+</main>
+
+<template id="rowTemplate">
+    <tr class="dataset-row">
+        {% for field in [
+            "transaction_id", "date", "customer_id", "product_id",
+            "product_name", "category", "quantity", "unit_price",
+            "cost_price", "region", "discount"
+        ] %}
+            <td>
+                <input name="{{ field }}[]"
+                       {% if field == "date" %}type="date"
+                       {% elif field in ["quantity", "unit_price", "cost_price", "discount"] %}type="number" step="any"
+                       {% endif %}
+                       {% if field == "quantity" %}min="0.01"
+                       {% elif field in ["unit_price", "cost_price", "discount"] %}min="0"
+                       {% endif %}
+                       {% if field != "discount" %}required{% endif %}>
+            </td>
+        {% endfor %}
+        <td><button type="button" class="remove-row" title="Remove row">×</button></td>
+    </tr>
+</template>
+
+<script>
+    const rows = document.getElementById("datasetRows");
+    const template = document.getElementById("rowTemplate");
+
+    const sampleRows = [
+        {
+            transaction_id: "SAMPLE-001",
+            date: "2026-10-01",
+            customer_id: "C-SAMPLE-001",
+            product_id: "P-SAMPLE-001",
+            product_name: "Wireless Mouse",
+            category: "Accessories",
+            quantity: "2",
+            unit_price: "1499",
+            cost_price: "1299",
+            region: "North",
+            discount: "0"
+        },
+        {
+            transaction_id: "SAMPLE-002",
+            date: "2026-10-02",
+            customer_id: "C-SAMPLE-002",
+            product_id: "P-SAMPLE-002",
+            product_name: "Mechanical Keyboard",
+            category: "Accessories",
+            quantity: "1",
+            unit_price: "4499",
+            cost_price: "3999",
+            region: "West",
+            discount: "100"
+        },
+        {
+            transaction_id: "SAMPLE-003",
+            date: "2026-10-03",
+            customer_id: "C-SAMPLE-001",
+            product_id: "P-SAMPLE-003",
+            product_name: "USB-C Cable",
+            category: "Accessories",
+            quantity: "4",
+            unit_price: "499",
+            cost_price: "349",
+            region: "North",
+            discount: "0"
+        }
+    ];
+
+    function addRow(values = {}) {
+        const fragment = template.content.cloneNode(true);
+        const row = fragment.querySelector("tr");
+
+        row.querySelectorAll("input").forEach(input => {
+            const field = input.name.replace("[]", "");
+            input.value = values[field] || "";
+            resizeInput(input);
+            input.addEventListener("input", () => resizeInput(input));
+        });
+        rows.appendChild(fragment);
+    }
+
+    function resizeInput(input) {
+        input.style.width = "auto";
+        const minimum = input.type === "date" ? 122 : 70;
+        const maximum = input.name === "product_name[]" ? 190 : 145;
+        input.style.width = `${Math.min(
+            maximum,
+            Math.max(minimum, input.scrollWidth + 8)
+        )}px`;
+    }
+
+    rows.querySelectorAll("input").forEach(input => {
+        input.addEventListener("input", () => resizeInput(input));
+        resizeInput(input);
+    });
+
+    document.getElementById("addRow").addEventListener("click", () => {
+        addRow();
+        updateRemoveButton();
+    });
+
+    document.getElementById("addSampleRows").addEventListener("click", () => {
+        sampleRows.forEach(addRow);
+        const sampleButton = document.getElementById("addSampleRows");
+        sampleButton.disabled = true;
+        sampleButton.textContent = "Sample data added";
+        updateRemoveButton();
+    });
+
+    function updateRemoveButton() {
+        document.getElementById("removeRow").disabled = rows.children.length <= 1;
+    }
+
+    document.getElementById("removeRow").addEventListener("click", () => {
+        if (rows.children.length > 1) {
+            rows.lastElementChild.remove();
+            updateRemoveButton();
+        }
+    });
+
+    rows.addEventListener("click", event => {
+        if (!event.target.classList.contains("remove-row")) return;
+        const row = event.target.closest("tr");
+        if (rows.children.length > 1) {
+            row.remove();
+            updateRemoveButton();
+        }
+    });
+
+    updateRemoveButton();
+</script>
+</body>
+</html>

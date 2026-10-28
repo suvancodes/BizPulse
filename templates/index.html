@@ -17,7 +17,14 @@
                 </div>
             </a>
 
-            <a class="nav-button" href="/upload">Get started</a>
+            <div class="auth-nav">
+                <a class="text-button" href="{{ url_for('auth_login') }}">
+                    Sign in
+                </a>
+                <a class="nav-button" href="{{ url_for('auth_register') }}">
+                    Get started
+                </a>
+            </div>
         </nav>
 
         <section class="hero-section">
@@ -35,6 +42,7 @@
                     <a class="primary-button" href="/upload">
                         Upload your dataset <strong>→</strong>
                     </a>
+                    <a class="text-button" href="/create-data">Add data manually</a>
                     <a class="text-button" href="#features">Explore features</a>
                 </div>
 

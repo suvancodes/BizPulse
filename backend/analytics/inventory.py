@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 
 PRODUCT_COLUMNS = {"product_id", "product_name"}
@@ -94,7 +95,7 @@ def calculate_inventory_analytics(
         lambda row: (
             row["stock_quantity"] / row["average_daily_demand"]
             if row["average_daily_demand"] > 0
-            else None
+            else np.nan
         ),
         axis=1,
     )
@@ -103,7 +104,7 @@ def calculate_inventory_analytics(
         if row["stock_quantity"] <= 0:
             return "Stockout"
         if (
-            row["days_until_stockout"] is not None
+            pd.notna(row["days_until_stockout"])
             and row["days_until_stockout"] <= 7
         ):
             return "Risk"
@@ -114,6 +115,11 @@ def calculate_inventory_analytics(
     result["status"] = result.apply(get_status, axis=1)
 
     result["days_until_stockout"] = result["days_until_stockout"].round(1)
+    result["days_until_stockout"] = (
+        result["days_until_stockout"]
+        .astype(object)
+        .where(result["days_until_stockout"].notna(), None)
+    )
     result["average_daily_demand"] = result[
         "average_daily_demand"
     ].round(2)

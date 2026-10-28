@@ -1,16 +1,14 @@
-product_id,product_name
-P001,Wireless Mouse
-P002,Mechanical Keyboard
-P003,USB-C Cable
-P004,Laptop Stand
-P005,Webcam
-P006,Bluetooth Speaker
-P007,Power Bank
-P008,Wireless Headphones
-P009,Smart Watch
-P010,HDMI Cable
-P011,USB Hub
-P012,Laptop Backpack
-P013,Phone Stand
-P014,Portable SSD
-P015,Wireless Charger
+product_id,product_name,category,size,unit_price,cost_price,brand,description
+TSH001,Classic Cotton T-Shirt,Tops,M,499,280,UrbanThread,Basic cotton crew-neck T-shirt
+JNS001,Slim Fit Jeans,Bottoms,32,1499,850,DenimDistrict,Dark blue slim-fit denim jeans
+DRS001,Floral Midi Dress,Dresses,M,1299,720,BloomWear,Floral print midi dress
+HOD001,Oversized Hoodie,Outerwear,L,1199,680,NorthLoop,Fleece-lined oversized hoodie
+SHR001,Linen Casual Shirt,Tops,L,899,510,UrbanThread,Breathable linen-blend shirt
+TRS001,Tailored Trousers,Bottoms,32,1099,620,Form & Fit,Smart tailored trousers
+TSH002,Graphic Print T-Shirt,Tops,L,599,330,UrbanThread,Graphic front-print T-shirt
+SKT001,Pleated Midi Skirt,Bottoms,M,999,560,BloomWear,Pleated midi skirt
+JKT001,Denim Jacket,Outerwear,M,1899,1120,DenimDistrict,Classic blue denim jacket
+DRS002,Casual Shirt Dress,Dresses,L,1399,790,BloomWear,Button-front casual shirt dress
+SHR002,Checked Casual Shirt,Tops,M,949,540,UrbanThread,Cotton checked casual shirt
+JNS002,Straight Fit Jeans,Bottoms,34,1599,900,DenimDistrict,Straight-leg blue denim jeans
+HOD002,Zip-Up Hoodie,Outerwear,M,1299,740,NorthLoop,Zip-up fleece hoodie

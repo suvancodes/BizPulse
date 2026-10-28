@@ -16,7 +16,10 @@
                 <span>Business intelligence, simplified</span>
             </div>
         </a>
-        <span class="secure-label">● Secure upload</span>
+        <div class="upload-nav-actions">
+            <a class="text-button" href="{{ url_for('create_data') }}">Add data manually</a>
+            <span class="secure-label">● Secure upload</span>
+        </div>
     </nav>
 
     <section class="upload-header">
@@ -36,6 +39,7 @@
     {% endif %}
 
     <form method="POST" enctype="multipart/form-data" id="dataForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <section class="data-files-grid">
             <article class="data-file-card primary-file">
                 <div class="file-card-header">
@@ -52,6 +56,7 @@
                 <div class="column-list">
                     <span>transaction_id</span>
                     <span>date</span>
+                    <span>customer_id</span>
                     <span>product_id</span>
                     <span>product_name</span>
                     <span>category</span>
@@ -65,6 +70,8 @@
                     <strong>region</strong> powers the Sales by region chart.
                     Use <strong>store_id</strong> instead if your data is store-based.
                 </p>
+                <pre class="format-example">transaction_id,date,customer_id,product_id,product_name,category,quantity,unit_price,cost_price,region
+T001,2026-01-15,C001,P001,Sample product,General,2,100,70,East</pre>
 
                 <label class="file-picker">
                     <input type="file" name="dataset" accept=".csv">
@@ -93,6 +100,8 @@
                 <p class="column-help">
                     Used to match products with inventory and display product names.
                 </p>
+                <pre class="format-example">product_id,product_name
+P001,Sample product</pre>
 
                 <label class="file-picker">
                     <input type="file" name="products" accept=".csv">
@@ -123,6 +132,8 @@
                 <p class="column-help">
                     <strong>product_id</strong> connects stock records to products and transactions.
                 </p>
+                <pre class="format-example">product_id,date,stock_quantity,reorder_level
+P001,2026-01-15,50,10</pre>
 
                 <label class="file-picker">
                     <input type="file" name="inventory" accept=".csv">
@@ -158,6 +169,7 @@
         </div>
 
         <form method="post" action="{{ url_for('use_sample_data') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
             <button class="sample-hero-button" type="submit">
                 Try sample dashboard →
             </button>

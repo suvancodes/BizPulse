@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizPulse | Create account</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="auth-page">
+    <a class="brand" href="{{ url_for('index') }}">
+        <div class="brand-mark">B</div>
+        <div>
+            <h1>BizPulse</h1>
+            <span>Business intelligence, simplified</span>
+        </div>
+    </a>
+
+    <section class="auth-card">
+        <p class="eyebrow">GET STARTED</p>
+        <h2>Create your account</h2>
+        <p class="muted">Your business data will be private to your account.</p>
+
+        {% if error %}
+            <div class="message error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label>
+                Email
+                <input type="email" name="email" value="{{ email or '' }}"
+                       autocomplete="email" required>
+            </label>
+            <label>
+                Password
+                <input type="password" name="password"
+                       autocomplete="new-password" minlength="8" required>
+            </label>
+            <label>
+                Confirm password
+                <input type="password" name="confirm_password"
+                       autocomplete="new-password" minlength="8" required>
+            </label>
+            <button type="submit" class="primary-button">Create account</button>
+        </form>
+
+        <div class="auth-links">
+            <span>Already have an account?</span>
+            <a href="{{ url_for('auth_login') }}">Sign in</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

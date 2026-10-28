@@ -1,0 +1,7 @@
+git switch -c trial
+git status
+git branch
+git add .
+git status
+git commit -m "Set up BizPulse trial version"
+git push -u origin trial

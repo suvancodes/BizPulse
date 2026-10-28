@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizPulse | Temporary error</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="auth-page">
+    <a class="brand" href="{{ url_for('index') }}">
+        <div class="brand-mark">B</div>
+        <div>
+            <h1>BizPulse</h1>
+            <span>Business intelligence, simplified</span>
+        </div>
+    </a>
+    <section class="auth-card">
+        <p class="eyebrow">DATA SERVICE</p>
+        <h2>We could not load your data</h2>
+        <div class="message error">{{ error }}</div>
+        <a class="primary-button" href="{{ url_for('dashboard_page') }}">
+            Try again
+        </a>
+    </section>
+</main>
+</body>
+</html>

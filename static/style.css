@@ -63,6 +63,18 @@ h1 {
     color: var(--text);
 }
 
+.format-example {
+    margin: 1rem 0 0;
+    padding: .75rem;
+    overflow-x: auto;
+    border: 1px solid rgba(148, 163, 184, .18);
+    border-radius: .65rem;
+    background: rgba(15, 23, 42, .65);
+    color: #c4b5fd;
+    font: .68rem/1.55 ui-monospace, SFMono-Regular, Consolas, monospace;
+    white-space: pre;
+}
+
 h2,
 h3 {
     color: var(--text);
@@ -118,6 +130,110 @@ button:hover,
     background: rgb(52 211 153 / 12%);
     border: 1px solid rgb(52 211 153 / 30%);
     color: #6ee7b7;
+}
+
+.auth-page {
+    display: grid;
+    width: min(100% - 32px, 520px);
+    min-height: 100vh;
+    align-content: center;
+    gap: 28px;
+    margin: auto;
+    padding: 32px 0;
+}
+
+.auth-page > .brand {
+    justify-self: center;
+}
+
+.auth-card {
+    padding: 30px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgb(17 24 39 / 88%);
+    box-shadow: var(--shadow);
+}
+
+.auth-card h2 {
+    margin: 8px 0;
+}
+
+.auth-form {
+    display: grid;
+    gap: 16px;
+    margin: 24px 0 18px;
+}
+
+.auth-form label {
+    display: grid;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface-light);
+    color: var(--text);
+    font: inherit;
+}
+
+.auth-form input:focus {
+    outline: 2px solid rgb(167 139 250 / 50%);
+    border-color: var(--primary-light);
+}
+
+.auth-form button {
+    width: 100%;
+}
+
+.auth-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 12px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+}
+
+.auth-links a {
+    color: var(--primary-light);
+    text-decoration: none;
+}
+
+.auth-links a:hover {
+    color: var(--text);
+}
+
+.auth-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-nav small {
+    max-width: 180px;
+    overflow: hidden;
+    color: var(--muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.auth-nav form {
+    margin: 0;
+}
+
+.auth-nav button {
+    padding: 10px 13px;
+    background: rgb(251 113 133 / 10%);
+    color: #fda4af;
+    box-shadow: none;
+    font-size: 12px;
 }
 
 .topbar,
@@ -770,6 +886,12 @@ button:hover,
     font-size: 12px;
 }
 
+.upload-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
 .trust-row span::first-letter {
     color: var(--green);
 }
@@ -1394,6 +1516,217 @@ button:hover,
     opacity: .7;
 }
 
+.record-form {
+    width: 100%;
+    max-width: none;
+    margin: 0 auto;
+}
+
+.record-form-card {
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: rgb(17 24 39 / 88%);
+    box-shadow: var(--shadow);
+}
+
+.record-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.record-form label {
+    display: grid;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.record-form input {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface-light);
+    color: var(--text);
+    font: inherit;
+}
+
+.record-form input:focus {
+    outline: 2px solid rgb(167 139 250 / 50%);
+    border-color: var(--primary-light);
+}
+
+.record-form label small {
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 400;
+}
+
+.record-form-note {
+    margin: 24px 0 20px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.dataset-builder {
+    max-width: 100%;
+}
+
+.dataset-builder-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.dataset-builder-header h3 {
+    margin: 5px 0 0;
+}
+
+.dataset-builder-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-bottom: 16px;
+}
+
+.secondary-button {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    background: rgb(139 92 246 / 12%);
+    box-shadow: none;
+}
+
+.secondary-button:disabled {
+    cursor: default;
+    opacity: .6;
+    transform: none;
+}
+
+.remove-button {
+    padding: 10px 14px;
+    border: 1px solid rgb(251 113 133 / 35%);
+    background: rgb(251 113 133 / 10%);
+    color: #fda4af;
+    box-shadow: none;
+}
+
+.remove-button:hover {
+    background: rgb(251 113 133 / 18%);
+    box-shadow: none;
+}
+
+.remove-button:disabled {
+    cursor: not-allowed;
+    opacity: .45;
+    transform: none;
+}
+
+.dataset-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    scrollbar-color: var(--primary) var(--surface-light);
+    -webkit-overflow-scrolling: touch;
+}
+
+.dataset-table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.dataset-table th,
+.dataset-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.dataset-table th {
+    background: rgb(255 255 255 / 4%);
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.dataset-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.dataset-table input {
+    width: auto;
+    min-width: 70px;
+    max-width: 190px;
+    padding: 9px 10px;
+    font-size: 12px;
+    field-sizing: content;
+}
+
+.dataset-table input[name="product_name[]"] {
+    min-width: 120px;
+    max-width: 190px;
+}
+
+.remove-row {
+    width: 30px;
+    padding: 5px;
+    background: rgb(251 113 133 / 12%);
+    color: var(--danger);
+    box-shadow: none;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.dataset-table th:last-child,
+.dataset-table td:last-child {
+    width: 42px;
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    background: var(--surface);
+}
+
+.dataset-table th:last-child {
+    z-index: 2;
+}
+
+@media (max-width: 1050px) and (min-width: 601px) {
+    .data-upload-page {
+        width: calc(100% - 24px);
+    }
+
+    .dataset-table th,
+    .dataset-table td {
+        padding: 6px 4px;
+    }
+
+    .dataset-table input {
+        padding: 8px 5px;
+        font-size: 10px;
+    }
+
+    .dataset-table th {
+        font-size: 8px;
+    }
+}
+
+.analyze-button {
+    width: 100%;
+    margin-top: 4px;
+}
+
 @media (max-width: 900px) {
     .data-files-grid {
         grid-template-columns: 1fr;
@@ -1422,6 +1755,14 @@ button:hover,
 
     .upload-actions button {
         width: 100%;
+    }
+
+    .record-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .record-form-card {
+        padding: 20px;
     }
 }
 
